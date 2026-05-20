@@ -1,16 +1,14 @@
 'use client';
 
+import { PAGES } from '@/configs/PAGES';
 import { supabase } from '@/lib/supabase';
 import Cookies from 'js-cookie';
 import { Loader2 } from 'lucide-react';
-import { useRouter } from 'next/navigation';
 import { FC, useEffect } from 'react';
 
 interface Props {}
 
 const CallBackGoogle: FC<Props> = (props) => {
-  const router = useRouter();
-
   useEffect(() => {
     const checkUser = async () => {
       const {
@@ -39,7 +37,7 @@ const CallBackGoogle: FC<Props> = (props) => {
         console.log('Profile exists');
       }
       Cookies.set('auth', 'true', { expires: 30 });
-      router.push('/');
+      window.location.href = PAGES.HOME;
     };
 
     checkUser();
