@@ -1,5 +1,5 @@
 import { PAGES } from '@/configs/PAGES';
-import { BookOpenCheck, Code2, Network, Share2 } from 'lucide-react';
+import { Code2, Network, Share2 } from 'lucide-react';
 import Link from 'next/link';
 
 const footerLinks = [
@@ -21,9 +21,7 @@ export function LandingFooter() {
       <div className="mx-auto flex max-w-7xl flex-col gap-10 md:flex-row md:items-start md:justify-between">
         <div className="max-w-sm">
           <Link href="/" className="flex items-center gap-3">
-            <span className="flex size-10 items-center justify-center rounded-lg bg-white text-slate-950">
-              <BookOpenCheck className="size-5" aria-hidden />
-            </span>
+            <img src="Logo.png" className="h-10 w-10 object-cover" />
             <span className="text-lg font-semibold tracking-tight text-white">Claro</span>
           </Link>
           <p className="mt-4 text-sm leading-6 text-slate-400">
