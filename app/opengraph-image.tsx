@@ -1,6 +1,6 @@
 import { ImageResponse } from 'next/og';
 
-export const alt = 'Claro collaborative study board for teams';
+export const alt = 'Claro school teamwork whiteboard for classmates';
 export const size = {
   width: 1200,
   height: 630,
@@ -54,7 +54,7 @@ export default function Image() {
               fontWeight: 800,
               letterSpacing: 0,
             }}>
-            Study together on one shared board
+            Build school projects on one shared board
           </div>
           <div
             style={{
@@ -63,8 +63,8 @@ export default function Image() {
               lineHeight: 1.35,
               color: '#475569',
             }}>
-            Sketch ideas, explain lessons, invite your team, and keep learning in the same calm
-            workspace.
+            Sketch ideas, explain lessons, invite classmates, divide tasks, and keep the whole team
+            moving together.
           </div>
         </div>
       </div>

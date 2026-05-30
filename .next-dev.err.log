@@ -1,13 +1,9 @@
-Error: spawn EPERM
-    at ChildProcess.spawn (node:internal/child_process:421:11)
-    at spawn (node:child_process:796:9)
-    at fork (node:child_process:174:10)
-    at C:\Users\12345\Vs-code\white-lending\node_modules\next\dist\cli\next-dev.js:253:45
-    at new Promise (<anonymous>)
-    at startServer (C:\Users\12345\Vs-code\white-lending\node_modules\next\dist\cli\next-dev.js:221:16)
-    at runDevServer (C:\Users\12345\Vs-code\white-lending\node_modules\next\dist\cli\next-dev.js:355:23)
-    at Module.nextDev (C:\Users\12345\Vs-code\white-lending\node_modules\next\dist\cli\next-dev.js:363:11) {
-  errno: -4048,
-  code: 'EPERM',
-  syscall: 'spawn'
-}
+⚠ Port 3000 is in use by process 19932, using available port 3001 instead.
+⨯ Another next dev server is already running.
+
+- Local:        http://localhost:3000
+- PID:          19932
+- Dir:          C:\Users\12345\Vs-code\white-lending
+- Log:          .next\dev\logs\next-development.log
+
+Run taskkill /PID 19932 /F to stop it.

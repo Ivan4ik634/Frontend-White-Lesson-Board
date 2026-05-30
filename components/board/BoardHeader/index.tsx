@@ -19,7 +19,7 @@ const BoardHeader: FC<Props> = ({ boardId }) => {
   const { users } = useUsersInBoard();
 
   return (
-    <header className="bg-background flex justify-between h-11 shrink-0 items-center gap-2 border-b border-border px-2">
+    <header className="flex min-h-12 shrink-0 items-center justify-between gap-2 border-b border-border bg-background px-2 sm:h-11 sm:min-h-11">
       <div className="flex min-w-0 items-center gap-1">
         <Link
           href={PAGES.HOME}
@@ -34,14 +34,14 @@ const BoardHeader: FC<Props> = ({ boardId }) => {
           {boardId}
         </span>
       </div>
-      <div className="flex items-center gap-2">
+      <div className="flex min-w-0 shrink-0 items-center gap-1.5 sm:gap-2">
         <DialogShare />
-        <AvatarGroup className="flex items-center gap-2">
+        <AvatarGroup className="flex max-w-24 items-center overflow-hidden pl-2 sm:max-w-none">
           {users
-            ? users?.map((boardUser) => {
+            ? users?.slice(0, 3).map((boardUser) => {
                 console.log(boardUser);
                 return (
-                  <Avatar key={boardUser.user_id.id}>
+                  <Avatar key={boardUser.user_id.id} size="sm" className="sm:size-8">
                     <AvatarImage src={boardUser.user_id?.avatar ?? ''} alt="@shadcn" />
                     <AvatarFallback>{boardUser.user_id.name?.[0] || '0'}</AvatarFallback>
                   </Avatar>

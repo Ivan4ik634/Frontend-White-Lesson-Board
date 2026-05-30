@@ -1,5 +1,6 @@
 import { Toaster } from '@/components/ui/sonner';
 import { siteConfig } from '@/lib/seo';
+import '@excalidraw/excalidraw/index.css';
 import type { Metadata } from 'next';
 import './globals.css';
 
@@ -60,7 +61,7 @@ export default function RootLayout({
     <html lang="en" className="h-full antialiased">
       <body className="min-h-full flex flex-col">
         {children}
-        <Toaster />
+        <Toaster position="top-center" />
       </body>
     </html>
   );

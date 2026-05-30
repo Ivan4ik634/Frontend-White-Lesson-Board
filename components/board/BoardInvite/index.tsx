@@ -57,16 +57,16 @@ export function BoardInvite({ boardId }: BoardInviteProps) {
   }, [attempt, boardId, loading, profile, profileError, router]);
 
   return (
-    <main className="flex min-h-dvh items-center justify-center px-4 py-10">
-      <section className="flex w-full max-w-sm flex-col items-center gap-4 text-center">
+    <main className="flex min-h-dvh items-center justify-center bg-background px-4 py-[calc(2.5rem+env(safe-area-inset-top))]">
+      <section className="flex w-full max-w-sm flex-col items-center gap-4 rounded-lg border border-border bg-card px-5 py-8 text-center shadow-sm sm:px-6">
         {joining && !failed ? (
-          <Loader2 className="size-6 animate-spin text-muted-foreground" aria-hidden />
+          <Loader2 className="size-7 animate-spin text-muted-foreground" aria-hidden />
         ) : null}
         <div className="space-y-2">
-          <h1 className="text-2xl font-semibold tracking-tight">
+          <h1 className="text-balance text-2xl font-semibold tracking-tight">
             {failed ? 'Could not accept invite' : 'Joining board'}
           </h1>
-          <p className="text-sm text-muted-foreground">
+          <p className="text-pretty text-sm leading-6 text-muted-foreground">
             {failed
               ? 'Please try again or ask for a new invite link.'
               : 'Your invite is being accepted.'}
@@ -75,6 +75,7 @@ export function BoardInvite({ boardId }: BoardInviteProps) {
         {failed ? (
           <Button
             type="button"
+            className="h-10 w-full sm:w-auto"
             onClick={() => {
               startedRef.current = false;
               setJoining(true);

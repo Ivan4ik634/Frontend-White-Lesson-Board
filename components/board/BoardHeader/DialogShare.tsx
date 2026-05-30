@@ -65,9 +65,9 @@ const DialogShare = () => {
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger render={<Button variant="outline" size="sm" />}>
         <Share2 className="size-3.5" aria-hidden />
-        Share
+        <span className="hidden sm:inline">Share</span>
       </DialogTrigger>
-      <DialogContent className="max-w-sm">
+      <DialogContent className="max-w-sm max-sm:bottom-0 max-sm:left-0 max-sm:right-0 max-sm:top-auto max-sm:max-w-none max-sm:translate-x-0 max-sm:translate-y-0 max-sm:rounded-b-none">
         <DialogHeader>
           <DialogTitle>Board access</DialogTitle>
           <DialogDescription>Choose who can open this board by link.</DialogDescription>
@@ -100,7 +100,7 @@ const DialogShare = () => {
           })}
         </div>
 
-        <DialogFooter>
+        <DialogFooter className="max-sm:[&_[data-slot=button]]:h-10">
           <Button type="button" variant="outline" onClick={copyBoardLink}>
             <Copy className="size-4" aria-hidden />
             Copy link

@@ -2,7 +2,8 @@ class Pages {
   LOGIN = '/login';
   REGISTER = '/register';
   PROFILE = '/profile';
-  HOME = '/';
+  HOME = '/app';
+  LENDING = '/';
   BOARDS = '/boards';
   BOARD(boardId: string) {
     return `/board/${boardId}`;

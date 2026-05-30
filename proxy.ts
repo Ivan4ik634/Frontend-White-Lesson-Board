@@ -6,6 +6,7 @@ export function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
   if (
     !isAuth &&
+    pathname !== '/' &&
     pathname !== '/login' &&
     pathname !== '/callback/google' &&
     pathname !== '/register'
@@ -17,12 +18,12 @@ export function proxy(request: NextRequest) {
     isAuth &&
     (pathname === '/login' || pathname === '/register' || pathname === '/callback/google')
   ) {
-    return NextResponse.redirect(new URL('/', request.url));
+    return NextResponse.redirect(new URL('/app', request.url));
   }
 
   return NextResponse.next();
 }
 
 export const config = {
-  matcher: ['/register', '/login', '/', '/callback/google', '/board/:path*'],
+  matcher: ['/register', '/login', '/app', '/callback/google', '/board/:path*'],
 };

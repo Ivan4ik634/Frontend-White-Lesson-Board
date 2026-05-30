@@ -1,16 +1,11 @@
-import type { TLShape } from '@tldraw/tldraw';
+import { ElementT } from './Element';
 
 export type ObjectBoard = {
   id: string;
-  type: string;
-  x: number;
-  y: number;
-  props: TLShape['props'];
-};
-export interface ObjectT {
-  id: string;
-  user_id: string;
+  objectId: string;
   board_id: string;
-  object: ObjectBoard;
-  last_change_user: string;
-}
+  user_id: string;
+  created_at: string;
+  object: ElementT;
+  last_change_user?: string;
+};

@@ -1,5 +1,5 @@
 import { supabase } from '@/lib/supabase';
-import { ObjectBoard } from '@/types/ObjectBoard';
+import { ElementT } from '@/types/Element';
 
 export const objectService = {
   findAll(boardId: string) {
@@ -7,10 +7,10 @@ export const objectService = {
   },
 
   findInBoard(id: string) {
-    return supabase.from('object').select(`*`).eq('id', id);
+    return supabase.from('object').select(`*`).eq('board_id', id);
   },
 
-  create(boardId: string, userId: string, object: ObjectBoard) {
+  create(boardId: string, userId: string, object: ElementT) {
     return supabase.from('object').insert({
       board_id: boardId,
       last_change_user: userId,
@@ -19,7 +19,8 @@ export const objectService = {
       object,
     });
   },
-  update(objectId: string, object: ObjectBoard) {
+
+  update(objectId: string, object: ElementT) {
     return supabase
       .from('object')
       .update({

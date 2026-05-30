@@ -12,6 +12,7 @@ export const boardService = {
   create(userId: string) {
     return supabase.from('board').insert({ user_id: userId }).single();
   },
+
   update(id: string, update: { access: 'public' | 'private' }) {
     return supabase.from('board').update(update).eq('id', id);
   },
