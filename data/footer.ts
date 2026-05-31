@@ -11,7 +11,7 @@ export const footerLinks = [
 ];
 
 export const socialLinks = [
-  { label: 'Social feed', href: null, icon: Share2 },
-  { label: 'Twitter', href: '#', icon: FaXTwitter },
-  { label: 'Telegram', href: '#', icon: RiTelegram2Fill },
+  { label: 'Copy link', href: null, icon: Share2 },
+  { label: 'Twitter', href: 'https://x.com/claroboard', icon: FaXTwitter },
+  { label: 'Telegram', href: 'https://t.me/claro_communication', icon: RiTelegram2Fill },
 ];

@@ -1,6 +1,7 @@
 import { Toaster } from '@/components/ui/sonner';
 import { siteConfig } from '@/lib/seo';
 import '@excalidraw/excalidraw/index.css';
+import { Analytics } from '@vercel/analytics/next';
 import type { Metadata } from 'next';
 import './globals.css';
 
@@ -60,6 +61,7 @@ export default function RootLayout({
   return (
     <html lang="en" className="h-full antialiased">
       <body className="min-h-full flex flex-col">
+        <Analytics />
         {children}
         <Toaster position="top-center" />
       </body>

@@ -13,8 +13,8 @@ export function LandingFooter() {
             <span className="text-lg font-semibold tracking-tight text-white">Claro</span>
           </Link>
           <p className="mt-4 text-sm leading-6 text-slate-400">
-            A collaborative whiteboard for teams, study groups, friends, and creators to brainstorm, organize
-            ideas, and work together in real time on learning, planning, and projects.
+            A collaborative whiteboard for teams, study groups, friends, and creators to brainstorm,
+            organize ideas, and work together in real time on learning, planning, and projects.
           </p>
         </div>
 
@@ -53,6 +53,7 @@ export function LandingFooter() {
                   );
                 return (
                   <Link
+                    target="_blank"
                     key={link.label}
                     href={link.href}
                     aria-label={link.label}
