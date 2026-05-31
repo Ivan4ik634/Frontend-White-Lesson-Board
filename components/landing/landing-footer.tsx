@@ -1,19 +1,7 @@
-import { PAGES } from '@/configs/PAGES';
-import { Code2, Network, Share2 } from 'lucide-react';
+'use client';
+import { footerLinks, socialLinks } from '@/data/footer';
 import Link from 'next/link';
-
-const footerLinks = [
-  { label: 'About', href: '#about' },
-  { label: 'Features', href: '#features' },
-  { label: 'Login', href: PAGES.LOGIN },
-  { label: 'Register', href: PAGES.REGISTER },
-];
-
-const socialLinks = [
-  { label: 'Social feed', href: '#', icon: Share2 },
-  { label: 'Source code', href: '#', icon: Code2 },
-  { label: 'Community', href: '#', icon: Network },
-];
+import { toast } from 'sonner';
 
 export function LandingFooter() {
   return (
@@ -21,12 +9,12 @@ export function LandingFooter() {
       <div className="mx-auto flex max-w-7xl flex-col gap-10 md:flex-row md:items-start md:justify-between">
         <div className="max-w-sm">
           <Link href="/" className="flex items-center gap-3">
-            <img src="Logo.png" className="h-10 w-10 object-cover" />
+            <img src="Logo.png" className="h-10 w-10 object-cover rounded-[6px]" />
             <span className="text-lg font-semibold tracking-tight text-white">Claro</span>
           </Link>
           <p className="mt-4 text-sm leading-6 text-slate-400">
-            A collaborative school whiteboard for classmates, teachers, and study groups who learn
-            better when they can build ideas together.
+            A collaborative whiteboard for teams, study groups, friends, and creators to brainstorm, organize
+            ideas, and work together in real time on learning, planning, and projects.
           </p>
         </div>
 
@@ -48,15 +36,31 @@ export function LandingFooter() {
           <div>
             <h2 className="text-sm font-semibold text-white">Social</h2>
             <div className="mt-4 flex gap-2">
-              {socialLinks.map((link) => (
-                <Link
-                  key={link.label}
-                  href={link.href}
-                  aria-label={link.label}
-                  className="flex size-9 items-center justify-center rounded-lg border border-white/10 text-slate-400 transition hover:-translate-y-0.5 hover:border-white/30 hover:text-white">
-                  <link.icon className="size-4" aria-hidden />
-                </Link>
-              ))}
+              {socialLinks.map((link) => {
+                if (link.href === null)
+                  return (
+                    <div
+                      key={link.label}
+                      aria-label={link.label}
+                      onClick={() =>
+                        navigator.clipboard
+                          .writeText(window.location.href)
+                          .then(() => toast.success('Link copied'))
+                      }
+                      className="flex cursor-pointer size-9 items-center justify-center rounded-lg border border-white/10 text-slate-400 transition hover:-translate-y-0.5 hover:border-white/30 hover:text-white">
+                      <link.icon className="size-4" aria-hidden />
+                    </div>
+                  );
+                return (
+                  <Link
+                    key={link.label}
+                    href={link.href}
+                    aria-label={link.label}
+                    className="flex size-9 items-center justify-center rounded-lg border border-white/10 text-slate-400 transition hover:-translate-y-0.5 hover:border-white/30 hover:text-white">
+                    <link.icon className="size-4" aria-hidden />
+                  </Link>
+                );
+              })}
             </div>
           </div>
         </div>

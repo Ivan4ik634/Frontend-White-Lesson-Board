@@ -1,22 +1,4 @@
-import { GraduationCap, Lightbulb, MessageSquareText } from 'lucide-react';
-
-const points = [
-  {
-    icon: GraduationCap,
-    title: 'Made for school groups',
-    text: 'Claro was created so classmates can work on lessons and projects visually instead of scattering ideas across chats, calls, and separate notes.',
-  },
-  {
-    icon: MessageSquareText,
-    title: 'Less group-work chaos',
-    text: 'Students can collect ideas, explain difficult topics, assign parts of a project, and keep everyone aligned on one shared board.',
-  },
-  {
-    icon: Lightbulb,
-    title: 'Teamwork builds clarity',
-    text: 'When classmates draw, react, and improve ideas together, studying becomes active. Shared context helps the group understand faster and remember longer.',
-  },
-];
+import { points } from '@/data/about';
 
 export function LandingAbout() {
   return (
@@ -25,12 +7,12 @@ export function LandingAbout() {
         <div>
           <p className="text-sm font-semibold uppercase tracking-[0.18em] text-slate-500">About</p>
           <h2 className="mt-4 text-balance text-3xl font-semibold tracking-normal text-slate-950 sm:text-4xl">
-            A calmer way for classmates to work together.
+            A calmer way for people to work together.
           </h2>
           <p className="mt-5 text-lg leading-8 text-slate-600">
-            School projects work better when everyone can see the plan. Claro turns lessons and
-            homework sessions into shared visual workspaces where ideas are easier to discuss,
-            improve, and finish as a team.
+            Projects work better when everyone can see the plan. Claro turns work sessions, study
+            groups, creative planning, and friendly brainstorms into shared visual spaces where
+            ideas are easier to discuss, improve, and finish together.
           </p>
         </div>
 

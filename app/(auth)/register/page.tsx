@@ -5,7 +5,7 @@ import { noIndexRobots } from '@/lib/seo';
 
 export const metadata: Metadata = {
   title: 'Register',
-  description: 'Create a Claro account to start shared study boards with your team.',
+  description: 'Create a Claro account to start shared boards for work, study, friends, and teams.',
   robots: noIndexRobots,
 };
 

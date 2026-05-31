@@ -27,7 +27,7 @@ export function HomeLanding() {
     if (!canJoin) return;
 
     const { data } = await supabase.from('board').select('*').eq('id', trimmed).maybeSingle();
-    if (!data) return toast.error('Not found lesson board');
+    if (!data) return toast.error('Board not found');
 
     router.push(PAGES.INVITE_IN_BOARD(data.id));
   }
@@ -76,11 +76,11 @@ export function HomeLanding() {
       <main className="flex flex-1 flex-col items-center justify-center px-4 py-8 sm:px-8 sm:py-14">
         <section className="flex w-full max-w-xl flex-col justify-center">
           <h1 className="text-balance text-3xl font-semibold tracking-tight text-foreground sm:text-4xl lg:text-[2.5rem] lg:leading-[1.15]">
-            Ready for your next group lesson?
+            Ready for your next shared board?
           </h1>
           <p className="mt-4 max-w-md text-pretty text-base leading-relaxed text-muted-foreground sm:text-lg">
-            A calm space for classmates to sketch, explain, divide tasks, and work together. Enter
-            a room code to join your team board, or start a new one in one click.
+            A calm space for work, study, friends, and creative plans. Enter a room code to join
+            your group board, or start a new one in one click.
           </p>
 
           <div className="mt-8 space-y-3">
@@ -109,7 +109,7 @@ export function HomeLanding() {
               </Button>
             </div>
             <p className="text-xs text-muted-foreground">
-              Use the code your teacher or teammate shared, or any board ID you have used before.
+              Use the code someone shared with you, or any board ID you have used before.
             </p>
           </div>
 

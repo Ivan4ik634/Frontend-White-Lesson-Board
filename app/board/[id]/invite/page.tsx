@@ -8,7 +8,7 @@ type PageProps = {
 
 export const metadata: Metadata = {
   title: 'Board Invite',
-  description: 'Accept an invitation to a private Claro study board.',
+  description: 'Accept an invitation to a private Claro shared board.',
   robots: noIndexRobots,
 };
 

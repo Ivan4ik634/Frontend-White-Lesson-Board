@@ -7,7 +7,8 @@ import { UserPlus } from 'lucide-react';
 import Link from 'next/link';
 
 export function LandingHeader() {
-  const isAuth = Cookies.get('auth') === 'true' || false;
+  const isAuth = Cookies.get('auth') === 'true' || null;
+  console.log(Cookies.get('auth') === 'true');
   return (
     <header className="sticky top-0 z-50 border-b border-slate-200 bg-white/85 backdrop-blur-md">
       <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
@@ -16,10 +17,8 @@ export function LandingHeader() {
           <span className="text-lg font-semibold tracking-tight text-slate-950">Claro</span>
         </Link>
 
-        {isAuth ? (
-          <Button
-            asChild
-            className="h-10 gap-2 rounded-lg bg-slate-950 px-4 text-sm font-medium text-white shadow-sm transition hover:bg-slate-800">
+        {isAuth === true ? (
+          <Button className="h-10 gap-2 rounded-lg bg-slate-950 px-4 text-sm font-medium text-white shadow-sm transition hover:bg-slate-800">
             <Link href={PAGES.HOME}>To home</Link>
           </Button>
         ) : (

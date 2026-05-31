@@ -4,7 +4,7 @@ import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
   title: 'App',
-  description: 'Create or join a private collaborative study board.',
+  description: 'Create or join a private collaborative board for work, study, friends, and teams.',
   alternates: {
     canonical: '/app',
   },

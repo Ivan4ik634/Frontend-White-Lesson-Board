@@ -4,7 +4,7 @@ import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
   title: 'Login',
-  description: 'Sign in to your Claro study board workspace.',
+  description: 'Sign in to your Claro shared board workspace.',
   robots: noIndexRobots,
 };
 

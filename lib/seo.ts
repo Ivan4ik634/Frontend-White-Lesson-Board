@@ -3,16 +3,16 @@ export const siteConfig = {
   url:
     process.env.NEXT_PUBLIC_SITE_URL ||
     (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : 'http://localhost:3000'),
-  title: 'Claro | School Teamwork Whiteboard',
+  title: 'Claro | Teamwork Whiteboard',
   description:
-    'Create a shared board for school teamwork, invite classmates, sketch ideas, divide tasks, explain lessons, and finish group projects together.',
+    'Create a shared board for work, study, friends, and teams. Invite people, sketch ideas, assign tasks, explain concepts, and finish projects together.',
   keywords: [
-    'school teamwork whiteboard',
-    'group project board',
-    'online whiteboard for students',
-    'class team board',
-    'shared classroom whiteboard',
+    'teamwork whiteboard',
+    'shared team board',
+    'online whiteboard for groups',
+    'work planning whiteboard',
     'study group workspace',
+    'collaboration board for friends',
   ],
 } as const;
 

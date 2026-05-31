@@ -5,8 +5,8 @@ import Link from 'next/link';
 import { LandingCanvasPreview } from './landing-canvas-preview';
 
 const stats = [
-  { value: '1 board', label: 'for class notes, sketches, and tasks' },
-  { value: 'Live', label: 'teamwork for lessons and group projects' },
+  { value: '1 board', label: 'for notes, sketches, tasks, and plans' },
+  { value: 'Live', label: 'teamwork for work, study, and friends' },
   { value: '0 setup', label: 'create a room, share the code, start together' },
 ];
 
@@ -17,15 +17,15 @@ export function LandingHero() {
         <div className="mx-auto max-w-4xl text-center">
           <div className="mx-auto inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-4 py-2 text-sm font-medium text-slate-700 shadow-sm">
             <UsersRound className="size-4 text-slate-700" aria-hidden />
-            Built for school lessons, study groups, and class teams
+            Built for work, study, friends, and every shared plan
           </div>
 
           <h1 className="mt-7 text-balance text-5xl font-semibold tracking-normal text-slate-950 sm:text-6xl lg:text-7xl">
             A shared whiteboard for teamwork.
           </h1>
           <p className="mx-auto mt-6 max-w-2xl text-pretty text-lg leading-8 text-slate-600 sm:text-xl">
-            Claro helps classmates explain ideas, draw diagrams, split assignment tasks, and keep
-            the whole group moving together during lessons and projects.
+            Claro helps teams, study groups, friends, and creators explain ideas, draw diagrams,
+            split tasks, and keep the whole group moving together.
           </p>
 
           <div className="mt-9 flex flex-col items-center justify-center gap-3 sm:flex-row">

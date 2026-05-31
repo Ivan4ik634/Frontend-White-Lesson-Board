@@ -7,8 +7,8 @@ type PageProps = {
 };
 
 export const metadata: Metadata = {
-  title: 'Study Board',
-  description: 'A private collaborative study board for lessons, sketches, and teamwork.',
+  title: 'Shared Board',
+  description: 'A private collaborative board for work, study, sketches, planning, and teamwork.',
   robots: noIndexRobots,
 };
 
