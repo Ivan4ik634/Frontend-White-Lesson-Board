@@ -90,6 +90,19 @@ export const useCanvasSelection = ({ zoom, elements, events, setElements, canvas
     selectedRef.current = selectedElementIds;
   }, [selectedElementIds]);
 
+  const handleOnClickDeleteElement = () => {
+    const ids = selectedElementIds;
+    if (!ids) return;
+    const updatedElements = elements.filter((el) => !selectedElementIds.includes(el.id));
+
+    setElements(updatedElements);
+    setSelectedElementIds([]);
+
+    for (let i = 0; i < ids.length; i++) {
+      events.handleDeleteElement(ids[i]);
+    }
+  };
+
   return {
     handleSelectionStart,
     selection,
@@ -97,6 +110,7 @@ export const useCanvasSelection = ({ zoom, elements, events, setElements, canvas
     selectedElementIds,
     handleSelectionMove,
     handleSelectionEnd,
+    handleOnClickDeleteElement,
     setSelectedElementIds,
   };
 };

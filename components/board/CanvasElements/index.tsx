@@ -71,19 +71,19 @@ const CanvasElements: FC<Props> = ({
             <div className="relative w-full h-full">
               <div
                 onPointerDown={(e) => handleResizeStart(e, 'top-left', el.id)}
-                className="absolute -left-1.5 -top-1.5 z-100 size-3 touch-none cursor-nwse-resize rounded-full border border-blue-500 bg-white sm:-left-0.5 sm:-top-0.5 sm:size-2"
+                className="absolute -left-1.5 -top-1.5 z-100 size-3 touch-none cursor-nwse-resize rounded-[1px] border border-blue-500 bg-white sm:-left-0.5 sm:-top-0.5 sm:size-2"
               />
               <div
                 onPointerDown={(e) => handleResizeStart(e, 'top-right', el.id)}
-                className="absolute -right-1.5 -top-1.5 z-100 size-3 touch-none cursor-sw-resize rounded-full border border-blue-500 bg-white sm:-right-0.5 sm:-top-0.5 sm:size-2"
+                className="absolute -right-1.5 -top-1.5 z-100 size-3 touch-none cursor-sw-resize rounded-[1px] border border-blue-500 bg-white sm:-right-0.5 sm:-top-0.5 sm:size-2"
               />
               <div
                 onPointerDown={(e) => handleResizeStart(e, 'bottom-left', el.id)}
-                className="absolute -bottom-1.5 -left-1.5 z-100 size-3 touch-none cursor-sw-resize rounded-full border border-blue-500 bg-white sm:-bottom-0.5 sm:-left-0.5 sm:size-2"
+                className="absolute -bottom-1.5 -left-1.5 z-100 size-3 touch-none cursor-sw-resize rounded-[1px] border border-blue-500 bg-white sm:-bottom-0.5 sm:-left-0.5 sm:size-2"
               />
               <div
                 onPointerDown={(e) => handleResizeStart(e, 'bottom-right', el.id)}
-                className="absolute -bottom-1.5 -right-1.5 z-100 size-3 touch-none cursor-nwse-resize rounded-full border border-blue-500 bg-white sm:-bottom-0.5 sm:-right-0.5 sm:size-2"
+                className="absolute -bottom-1.5 -right-1.5 z-100 size-3 touch-none cursor-nwse-resize rounded-[1px] border border-blue-500 bg-white sm:-bottom-0.5 sm:-right-0.5 sm:size-2"
               />
             </div>
           </div>

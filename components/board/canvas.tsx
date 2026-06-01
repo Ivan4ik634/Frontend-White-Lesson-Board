@@ -80,6 +80,7 @@ export function Canvas({ events, setElements, initData }: BoardCanvasProps) {
     isSelectionRef,
     setSelectedElementIds,
     selectedElementIds,
+    handleOnClickDeleteElement,
   } = useCanvasSelection({
     canvasRef,
     zoom,
@@ -167,7 +168,12 @@ export function Canvas({ events, setElements, initData }: BoardCanvasProps) {
       onPointerUp={handleCanvasTriggerEnd}
       onPointerCancel={handleCanvasTriggerEnd}
       className="relative h-full w-full touch-none overflow-hidden rounded-lg border border-border bg-background shadow-sm sm:rounded-xl">
-      <BoardToolRail activeTool={tool} onToolChange={setTool} />
+      <BoardToolRail
+        selectedElementIds={selectedElementIds}
+        handleOnClickDeleteElement={handleOnClickDeleteElement}
+        activeTool={tool}
+        onToolChange={setTool}
+      />
 
       <div
         ref={canvasRef}
