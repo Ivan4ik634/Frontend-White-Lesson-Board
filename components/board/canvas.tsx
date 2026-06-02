@@ -4,6 +4,7 @@ import { useCanvasCamera } from '@/hooks/useCanvas/useCanvasCamera';
 import { useCanvasCopied } from '@/hooks/useCanvas/useCanvasCopied';
 import { useCanvasDrop } from '@/hooks/useCanvas/useCanvasDrop';
 import { useCanvasElement } from '@/hooks/useCanvas/useCanvasElement';
+import { useCanvasEraser } from '@/hooks/useCanvas/useCanvasEraser';
 import { useCanvasPen } from '@/hooks/useCanvas/useCanvasPen';
 import { useCanvasResize } from '@/hooks/useCanvas/useCanvasResize';
 import { useCanvasSelection } from '@/hooks/useCanvas/useCanvasSelection';
@@ -121,11 +122,22 @@ export function Canvas({ events, setElements, initData }: BoardCanvasProps) {
     zoom,
     resizeRef,
   });
+  const { isErasing, handleEraserStart, handleEraserMove, handleEraserEnd } = useCanvasEraser({
+    zoom,
+    elements,
+    setElements,
+    canvasRef,
+    events,
+    tool,
+  });
 
   const { handleCanvasTriggerStart, handleCanvasTriggerMove, handleCanvasTriggerEnd } =
     useCanvasTrigger({
       tool,
       handleSelectionStart,
+      handleEraserStart,
+      handleEraserMove,
+      handleEraserEnd,
       handleSelectionMove,
       handleSelectionEnd,
       handleUpdateObjectDown,
@@ -168,12 +180,7 @@ export function Canvas({ events, setElements, initData }: BoardCanvasProps) {
       onPointerUp={handleCanvasTriggerEnd}
       onPointerCancel={handleCanvasTriggerEnd}
       className="relative h-full w-full touch-none overflow-hidden rounded-lg border border-border bg-background shadow-sm sm:rounded-xl">
-      <BoardToolRail
-        selectedElementIds={selectedElementIds}
-        handleOnClickDeleteElement={handleOnClickDeleteElement}
-        activeTool={tool}
-        onToolChange={setTool}
-      />
+      <BoardToolRail activeTool={tool} onToolChange={setTool} />
 
       <div
         ref={canvasRef}

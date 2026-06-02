@@ -1,7 +1,8 @@
+import { BoardTool } from '@/components/board/BoardToolRail';
 import { PointerEvent } from 'react';
 
 interface Props {
-  tool: string;
+  tool: BoardTool;
 
   handleSelectionStart: (e: PointerEvent<HTMLDivElement>) => void;
   handleSelectionMove: (e: PointerEvent<HTMLDivElement>) => void;
@@ -14,6 +15,10 @@ interface Props {
   handlePenStart: (e: PointerEvent<HTMLDivElement>) => void;
   handlePenMove: (e: PointerEvent<HTMLDivElement>) => void;
   handlePenEnd: () => void;
+
+  handleEraserStart: (e: PointerEvent<HTMLDivElement>) => void;
+  handleEraserMove: (e: PointerEvent<HTMLDivElement>) => void;
+  handleEraserEnd: () => void;
 
   handleCaremaStart: (e: PointerEvent<HTMLDivElement>) => void;
   handleCameraMove: (e: PointerEvent<HTMLDivElement>) => void;
@@ -35,6 +40,10 @@ export const useCanvasTrigger = ({
   handleSelectionStart,
   handleSelectionMove,
   handleSelectionEnd,
+
+  handleEraserStart,
+  handleEraserMove,
+  handleEraserEnd,
 
   handleUpdateObjectDown,
   handleUpdateObjectMove,
@@ -68,6 +77,10 @@ export const useCanvasTrigger = ({
         handleUpdateObjectDown(e);
         break;
 
+      case 'eraser':
+        handleEraserStart(e);
+        break;
+
       case 'pen':
         handlePenStart(e);
         break;
@@ -94,6 +107,10 @@ export const useCanvasTrigger = ({
     switch (tool) {
       case 'cursor':
         handleUpdateObjectMove(e);
+        break;
+
+      case 'eraser':
+        handleEraserMove(e);
         break;
 
       case 'pen':
@@ -126,6 +143,10 @@ export const useCanvasTrigger = ({
     switch (tool) {
       case 'cursor':
         handleUpdateObjectUp();
+        break;
+
+      case 'eraser':
+        handleEraserEnd();
         break;
 
       case 'pen':
