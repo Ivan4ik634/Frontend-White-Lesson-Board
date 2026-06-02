@@ -17,7 +17,7 @@ export const useCanvasCopied = ({
 }: Props) => {
   const copiedRef = useRef<ElementT[]>([]);
   useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
+    const handleKeyDown = async (e: KeyboardEvent) => {
       if (e.key.toLowerCase() === 'c' && e.ctrlKey) {
         const copied = elements.filter((el) => selectedElementIds.includes(el.id));
 
@@ -39,10 +39,12 @@ export const useCanvasCopied = ({
           };
         });
         setElements((prev) => [...prev, ...cloned]);
-        for (let i = 0; i < cloned.length; i++) {
-          events.handleCreateElement(cloned[i]);
-        }
+
         setSelectedElementIds(cloned.map((el) => el.id));
+
+        for (let i = 0; i < cloned.length; i++) {
+          await events.handleCreateElement(cloned[i]);
+        }
       }
     };
 

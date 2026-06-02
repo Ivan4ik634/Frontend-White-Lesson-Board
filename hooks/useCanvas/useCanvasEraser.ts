@@ -22,10 +22,8 @@ export const useCanvasEraser = ({
 }: Props) => {
   const [isErasing, setIsErasing] = useState(false);
   const lastPointRef = useRef({ x: 0, y: 0 });
-  console.log('qq');
   const handleEraserStart = (e: PointerEvent<HTMLDivElement>) => {
     if (tool !== 'eraser') return;
-    console.log('eraser');
     setIsErasing(true);
     const { x, y } = getWorld({ e, zoom, canvasRef });
 
@@ -33,16 +31,16 @@ export const useCanvasEraser = ({
 
     return;
   };
-  const handleEraserMove = (e: PointerEvent<HTMLDivElement>) => {
+  const handleEraserMove = async (e: PointerEvent<HTMLDivElement>) => {
     if (!isErasing) return;
     if (tool !== 'eraser') return;
-    console.log('eraser');
 
     const { x, y } = getWorld({ e, zoom, canvasRef });
     for (const element of elements) {
       if (isIntersecting({ start: lastPointRef.current, end: { x, y }, el: element })) {
         setElements((prev) => prev.filter((el) => el.id !== element.id));
-        events.handleDeleteElement(element.id);
+        await events.handleDeleteElement(element.id);
+        setTimeout(() => {}, 1000);
       }
     }
   };

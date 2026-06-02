@@ -53,7 +53,7 @@ export const useCanvasResize = ({ elements, zoom, events, setElements, canvasRef
       },
     };
   };
-  const handleResizeMove = (e: PointerEvent<HTMLDivElement>) => {
+  const handleResizeMove = async (e: PointerEvent<HTMLDivElement>) => {
     if (!resizeRef.current.isResizing) return;
 
     const { x, y } = getWorld({
@@ -117,7 +117,7 @@ export const useCanvasResize = ({ elements, zoom, events, setElements, canvasRef
 
     setElements((prev) => prev.map((el) => (el.id === updatedElement.id ? updatedElement : el)));
 
-    events.handleUpdateElement(updatedElement);
+    await events.handleUpdateElement(updatedElement);
   };
   const handleResizeEnd = () => {
     resizeRef.current = {

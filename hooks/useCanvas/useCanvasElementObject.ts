@@ -14,7 +14,10 @@ export const useCanvasElementObject = ({ events, canvasRef, zoom, tool, setEleme
   const startPointRef = useRef({ x: 0, y: 0 });
   const objectIdRef = useRef<string>('');
   const isDrawingRef = useRef(false);
-  const handleElementStart = (e: PointerEvent<HTMLDivElement>, type: 'rectangle' | 'circle') => {
+  const handleElementStart = async (
+    e: PointerEvent<HTMLDivElement>,
+    type: 'rectangle' | 'circle',
+  ) => {
     if (tool !== type) return;
     isDrawingRef.current = true;
     const { x, y } = getWorld({ e, zoom, canvasRef });
@@ -32,10 +35,14 @@ export const useCanvasElementObject = ({ events, canvasRef, zoom, tool, setEleme
       type,
     };
     setElements((prev) => [...prev, element]);
+
     events.handleCreateElement(element);
   };
 
-  const handleElementMove = (e: PointerEvent<HTMLDivElement>, type: 'rectangle' | 'circle') => {
+  const handleElementMove = async (
+    e: PointerEvent<HTMLDivElement>,
+    type: 'rectangle' | 'circle',
+  ) => {
     if (!isDrawingRef.current) return;
 
     const { x, y } = getWorld({ e, zoom, canvasRef });
@@ -44,6 +51,11 @@ export const useCanvasElementObject = ({ events, canvasRef, zoom, tool, setEleme
 
     const width = x - start.x;
     const height = y - start.y;
+
+    if (Math.abs(width) < 2 || Math.abs(height) < 2) {
+      return; // игнор мусора
+    }
+
     const size = Math.max(Math.abs(width), Math.abs(height));
     const element = {
       id: objectIdRef.current,
@@ -56,6 +68,7 @@ export const useCanvasElementObject = ({ events, canvasRef, zoom, tool, setEleme
       width: type === 'circle' ? size : Math.abs(width),
       height: type === 'circle' ? size : Math.abs(height),
     };
+
     setElements((prev) =>
       prev.map((el) =>
         el.id === objectIdRef.current
@@ -66,7 +79,8 @@ export const useCanvasElementObject = ({ events, canvasRef, zoom, tool, setEleme
           : el,
       ),
     );
-    events.handleUpdateElement(element);
+    console.log('SEND UPDATE', element.id, element.width, element.height);
+    await events.handleUpdateElement(element);
   };
 
   const handleElementEnd = () => {

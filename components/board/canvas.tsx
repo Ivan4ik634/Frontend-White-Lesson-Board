@@ -204,10 +204,10 @@ export function Canvas({ events, setElements, initData }: BoardCanvasProps) {
           <textarea
             ref={inputRef}
             value={draft}
-            onChange={(e) => {
+            onChange={async (e) => {
               setDraft(e.target.value);
               if (editingEl && editingEl?.type === 'text')
-                events.handleUpdateElement({ ...editingEl!, text: e.target.value });
+                await events.handleUpdateElement({ ...editingEl!, text: e.target.value });
             }}
             onBlur={finishEditing}
             onKeyDown={(e) => {

@@ -26,7 +26,7 @@ export const useCanvasPen = ({ zoom, elements, events, tool, canvasRef, setEleme
   const pathIdRef = useRef('');
   const isDrawingRef = useRef(false);
 
-  const handlePenStart = (e: PointerEvent<HTMLDivElement>) => {
+  const handlePenStart = async (e: PointerEvent<HTMLDivElement>) => {
     if (tool !== 'pen') return;
 
     const point = getWorld({ e, zoom, canvasRef });
@@ -45,10 +45,10 @@ export const useCanvasPen = ({ zoom, elements, events, tool, canvasRef, setEleme
 
     setElements((prev) => [...prev, element]);
 
-    events.handleCreateElement(element);
+    await events.handleCreateElement(element);
   };
 
-  const handlePenMove = (e: PointerEvent<HTMLDivElement>) => {
+  const handlePenMove = async (e: PointerEvent<HTMLDivElement>) => {
     if (tool !== 'pen') return;
     if (!isDrawingRef.current) return;
 
@@ -70,7 +70,7 @@ export const useCanvasPen = ({ zoom, elements, events, tool, canvasRef, setEleme
       prev.map((el) => (el.id === id && el.type === 'pen' ? updatedElement : el)),
     );
 
-    events.handleUpdateElement(updatedElement);
+    await events.handleUpdateElement(updatedElement);
   };
 
   const handlePenEnd = () => {

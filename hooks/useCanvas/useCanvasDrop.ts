@@ -87,7 +87,7 @@ export const useCanvasDrop = ({
       },
     };
   };
-  const handleUpdateObjectMove = (e: PointerEvent<HTMLDivElement>) => {
+  const handleUpdateObjectMove = async (e: PointerEvent<HTMLDivElement>) => {
     if (!transformRef.current.isDragging) return;
 
     const { x, y } = getWorld({ e, zoom, canvasRef });
@@ -120,7 +120,7 @@ export const useCanvasDrop = ({
 
     setElements((prev) => prev.map((el) => (el.id === id ? updatedElement : el)));
 
-    events.handleUpdateElement(updatedElement);
+    await events.handleUpdateElement(updatedElement);
   };
   const handleUpdateObjectUp = () => {
     const id = transformRef.current.elementId;

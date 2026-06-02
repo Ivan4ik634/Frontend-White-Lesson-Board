@@ -55,7 +55,7 @@ export const useBoardStore = ({ boardId }: useBoardEventsProps) => {
 
     const now = Date.now();
 
-    if (now - lastUpdateRef.current < 80) return;
+    if (now - lastUpdateRef.current < 50) return;
 
     lastUpdateRef.current = now;
 
@@ -102,7 +102,15 @@ export const useBoardStore = ({ boardId }: useBoardEventsProps) => {
     const handleUpdateElementRealtime = (payload: ElementT & { user_id: string }) => {
       if (payload.user_id === profile.id) return;
 
-      setElements((prev) => prev.map((el) => (el.id === payload.id ? payload : el)));
+      setElements((prev) => {
+        const exists = prev.some((el) => el.id === payload.id);
+
+        if (!exists) {
+          return [...prev, payload];
+        }
+
+        return prev.map((el) => (el.id === payload.id ? payload : el));
+      });
     };
 
     const handleDeleteElementRealtime = (payload: { id: string; user_id: string }) => {

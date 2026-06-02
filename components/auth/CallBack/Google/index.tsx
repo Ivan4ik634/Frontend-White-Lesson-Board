@@ -14,6 +14,7 @@ const CallBackGoogle: FC<Props> = (props) => {
       const {
         data: { session },
       } = await supabase.auth.getSession();
+      console.log(session);
 
       if (!session) return;
 

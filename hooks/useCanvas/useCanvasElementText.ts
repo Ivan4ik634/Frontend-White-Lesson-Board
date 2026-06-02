@@ -22,7 +22,7 @@ export const useCanvasElementText = ({
   const [editingId, setEditingId] = useState<string | null>(null);
   const [draft, setDraft] = useState('');
   const inputRef = useRef<HTMLTextAreaElement>(null);
-  const handleTextStart = (e: PointerEvent<HTMLDivElement>) => {
+  const handleTextStart = async (e: PointerEvent<HTMLDivElement>) => {
     if (tool !== 'text') return;
     const { x, y } = getWorld({ e, zoom, canvasRef });
 
@@ -40,7 +40,9 @@ export const useCanvasElementText = ({
 
     setEditingId(id);
     setDraft('');
-    events.handleCreateElement(element);
+
+    await events.handleCreateElement(element);
+
     setTimeout(() => {
       inputRef.current?.focus();
     }, 0);
@@ -58,14 +60,14 @@ export const useCanvasElementText = ({
     }, 0);
   };
 
-  const finishEditing = () => {
+  const finishEditing = async () => {
     const current = elements.find((el) => el.id === editingId);
 
     if (!current || !(current.type === 'text')) return;
 
     setElements((prev) => prev.map((el) => (el.id === editingId ? { ...el, text: draft } : el)));
 
-    events.handleUpdateElement({ ...current, text: draft });
+    await events.handleUpdateElement({ ...current, text: draft });
     setEditingId(null);
     setDraft('');
   };

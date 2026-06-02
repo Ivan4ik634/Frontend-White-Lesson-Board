@@ -66,7 +66,7 @@ export const useCanvasSelection = ({ zoom, elements, events, setElements, canvas
   };
 
   useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
+    const handleKeyDown = async (e: KeyboardEvent) => {
       if (e.key === 'Escape') {
         startPointSelectionRef.current = { x: 0, y: 0 };
         setSelection({ x: 0, y: 0, width: 0, height: 0 });
@@ -76,7 +76,7 @@ export const useCanvasSelection = ({ zoom, elements, events, setElements, canvas
       if (e.key === 'Delete') {
         setElements((prev) => prev.filter((el) => !selectedRef.current.includes(el.id)));
         for (let i = 0; i < selectedRef.current.length; i++) {
-          events.handleDeleteElement(selectedRef.current[i]);
+          await events.handleDeleteElement(selectedRef.current[i]);
         }
       }
     };
@@ -90,7 +90,7 @@ export const useCanvasSelection = ({ zoom, elements, events, setElements, canvas
     selectedRef.current = selectedElementIds;
   }, [selectedElementIds]);
 
-  const handleOnClickDeleteElement = () => {
+  const handleOnClickDeleteElement = async () => {
     const ids = selectedElementIds;
     if (!ids) return;
     const updatedElements = elements.filter((el) => !selectedElementIds.includes(el.id));
@@ -99,7 +99,7 @@ export const useCanvasSelection = ({ zoom, elements, events, setElements, canvas
     setSelectedElementIds([]);
 
     for (let i = 0; i < ids.length; i++) {
-      events.handleDeleteElement(ids[i]);
+      await events.handleDeleteElement(ids[i]);
     }
   };
 
