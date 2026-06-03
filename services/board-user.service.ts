@@ -83,7 +83,6 @@ export const boardUserService = {
       .from('board_user')
       .delete()
       .eq('board_id', boardId)
-      .eq('user_id', userId)
-      .single();
+      .eq('user_id', userId);
   },
 };

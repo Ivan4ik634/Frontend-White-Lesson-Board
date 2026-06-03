@@ -148,6 +148,8 @@ export const useBoardStore = ({ boardId }: useBoardEventsProps) => {
 
     loading,
 
+    profile,
+
     setElements,
 
     elements,

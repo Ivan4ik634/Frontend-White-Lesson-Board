@@ -1,5 +1,6 @@
 import { BoardShell } from '@/components/board/board-shell';
 import { noIndexRobots } from '@/lib/seo';
+import OnlineTracker from '@/providers/OnlineProvider';
 import type { Metadata } from 'next';
 
 type PageProps = {
@@ -15,5 +16,10 @@ export const metadata: Metadata = {
 export default async function BoardRoutePage({ params }: PageProps) {
   const { id } = await params;
 
-  return <BoardShell boardId={id} />;
+  return (
+    <>
+      <OnlineTracker />
+      <BoardShell boardId={id} />
+    </>
+  );
 }

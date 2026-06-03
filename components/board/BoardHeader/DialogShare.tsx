@@ -100,6 +100,8 @@ const DialogShare = () => {
           })}
         </div>
 
+        <p className="opacity-50">Note: Max users: 4</p>
+
         <DialogFooter className="max-sm:[&_[data-slot=button]]:h-10">
           <Button type="button" variant="outline" onClick={copyBoardLink}>
             <Copy className="size-4" aria-hidden />

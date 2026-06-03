@@ -1,3 +1,5 @@
+import { BoardUserT } from './Board';
+
 export type ElementT =
   | {
       id: string;
@@ -33,3 +35,4 @@ export type EventsCanvas = {
   handleUpdateElement: (element: ElementT) => void;
   handleDeleteElement: (id: string) => void;
 };
+export interface CursorsCanvas extends BoardUserT {}

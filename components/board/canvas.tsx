@@ -9,9 +9,11 @@ import { useCanvasPen } from '@/hooks/useCanvas/useCanvasPen';
 import { useCanvasResize } from '@/hooks/useCanvas/useCanvasResize';
 import { useCanvasSelection } from '@/hooks/useCanvas/useCanvasSelection';
 import { useCanvasTrigger } from '@/hooks/useCanvas/useCanvasTrigger';
-import { ElementT, EventsCanvas } from '@/types/Element';
-import { useEffect, useRef, useState } from 'react';
+import { CursorsCanvas, ElementT, EventsCanvas } from '@/types/Element';
+import { UserT } from '@/types/UserT';
+import { useRef, useState } from 'react';
 import { BoardTool, BoardToolRail } from './BoardToolRail';
+import CanvasCursors from './CanvasCursors';
 import CanvasElements from './CanvasElements';
 import CanvasSelection from './CanvasSelection';
 
@@ -19,35 +21,23 @@ type BoardCanvasProps = {
   events: EventsCanvas;
   initData: ElementT[];
   setElements: React.Dispatch<React.SetStateAction<ElementT[]>>;
+  cursors?: CursorsCanvas[];
+  onCursorMove?: (point: { x: number; y: number }) => void;
+  profile?: UserT | null;
 };
 
-export function Canvas({ events, setElements, initData }: BoardCanvasProps) {
+export function Canvas({
+  events,
+  cursors = [],
+  onCursorMove,
+  profile = null,
+  setElements,
+  initData,
+}: BoardCanvasProps) {
   const [tool, setTool] = useState<BoardTool>('grab');
   const canvasRef = useRef<HTMLDivElement | null>(null);
 
-  const ref = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    const el = ref.current;
-
-    if (!el) return;
-
-    const handleWheel = (e: WheelEvent) => {
-      if (e.ctrlKey) {
-        e.preventDefault();
-
-        console.log('custom zoom');
-      }
-    };
-
-    el.addEventListener('wheel', handleWheel, { passive: false });
-
-    return () => {
-      el.removeEventListener('wheel', handleWheel);
-    };
-  }, []);
-
-  const { camera, handleCaremaStart, handleZoom, zoom, handleCameraMove, handleCameraEnd } =
+  const { camera, ref, handleCaremaStart, handleZoom, zoom, handleCameraMove, handleCameraEnd } =
     useCanvasCamera(tool);
 
   const {
@@ -81,7 +71,6 @@ export function Canvas({ events, setElements, initData }: BoardCanvasProps) {
     isSelectionRef,
     setSelectedElementIds,
     selectedElementIds,
-    handleOnClickDeleteElement,
   } = useCanvasSelection({
     canvasRef,
     zoom,
@@ -122,7 +111,7 @@ export function Canvas({ events, setElements, initData }: BoardCanvasProps) {
     zoom,
     resizeRef,
   });
-  const { isErasing, handleEraserStart, handleEraserMove, handleEraserEnd } = useCanvasEraser({
+  const { handleEraserStart, handleEraserMove, handleEraserEnd } = useCanvasEraser({
     zoom,
     elements,
     setElements,
@@ -156,6 +145,22 @@ export function Canvas({ events, setElements, initData }: BoardCanvasProps) {
       handleResizeEnd,
     });
   const editingEl = getEditingElement();
+
+  const handlePointerMove = (e: React.PointerEvent<HTMLDivElement>) => {
+    const canvas = canvasRef.current;
+
+    if (canvas && onCursorMove) {
+      const rect = canvas.getBoundingClientRect();
+
+      onCursorMove({
+        x: (e.clientX - rect.left) / zoom,
+        y: (e.clientY - rect.top) / zoom,
+      });
+    }
+
+    handleCanvasTriggerMove(e);
+  };
+
   return (
     <div
       ref={ref}
@@ -176,7 +181,7 @@ export function Canvas({ events, setElements, initData }: BoardCanvasProps) {
 
         handleCanvasTriggerStart(e);
       }}
-      onPointerMove={handleCanvasTriggerMove}
+      onPointerMove={handlePointerMove}
       onPointerUp={handleCanvasTriggerEnd}
       onPointerCancel={handleCanvasTriggerEnd}
       className="relative h-full w-full touch-none overflow-hidden rounded-lg border border-border bg-background shadow-sm sm:rounded-xl">
@@ -200,6 +205,7 @@ export function Canvas({ events, setElements, initData }: BoardCanvasProps) {
           startEditing={startEditing}
         />
         <CanvasSelection isSelectionRef={isSelectionRef} selection={selection} />
+        <CanvasCursors profile={profile} cursors={cursors} zoom={zoom} />
         {editingId && (
           <textarea
             ref={inputRef}
