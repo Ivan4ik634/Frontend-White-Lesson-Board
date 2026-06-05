@@ -57,8 +57,6 @@ export const useCanvasSelection = ({ zoom, elements, events, setElements, canvas
       .filter((el) => isIntersecting({ start, end, el }))
       .map((el) => el.id);
 
-    console.log(selectedIds);
-
     setSelectedElementIds(selectedIds);
 
     startPointSelectionRef.current = { x: 0, y: 0 };

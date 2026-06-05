@@ -26,7 +26,6 @@ export default function OnlineTracker() {
         const state = channel.presenceState();
 
         const onlineUserIds = Object.keys(state);
-        console.log('onlineUserIds', onlineUserIds);
         setOnlineUsers(onlineUserIds);
       })
       .subscribe(async (status) => {

@@ -79,10 +79,6 @@ export const boardUserService = {
   },
 
   delete(boardId: string, userId: string) {
-    return supabase
-      .from('board_user')
-      .delete()
-      .eq('board_id', boardId)
-      .eq('user_id', userId);
+    return supabase.from('board_user').delete().eq('board_id', boardId).eq('user_id', userId);
   },
 };

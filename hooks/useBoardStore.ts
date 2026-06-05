@@ -1,4 +1,5 @@
 import { supabase } from '@/lib/supabase';
+import { boardUserService } from '@/services/board-user.service';
 import { objectService } from '@/services/object.service';
 import { ElementT } from '@/types/Element';
 import { RealtimeChannel } from '@supabase/supabase-js';
@@ -12,28 +13,33 @@ interface useBoardEventsProps {
 export const useBoardStore = ({ boardId }: useBoardEventsProps) => {
   const [elements, setElements] = useState<ElementT[]>([]);
   const [loading, setLoading] = useState(true);
+  const [cameraInit, setCameraInit] = useState({ x: 0, y: 0 });
 
   const { profile } = useProfile();
 
   const lastUpdateRef = useRef(0);
 
   const channelRef = useRef<RealtimeChannel | null>(null);
-
   useEffect(() => {
-    const getObjects = async () => {
+    if (!profile) return;
+    const get = async () => {
       setLoading(true);
 
-      const { data } = await objectService.findInBoard(boardId);
+      const { data: user } = await boardUserService.findOne(profile?.id, boardId);
+      const { data: objects } = await objectService.findInBoard(boardId);
 
-      if (data) {
-        setElements(data.flatMap((item) => item.object));
+      if (objects) {
+        setElements(objects.flatMap((item) => item.object));
+      }
+      if (user) {
+        setCameraInit({ x: user.x, y: user.y });
       }
 
       setLoading(false);
     };
 
-    getObjects();
-  }, [boardId]);
+    get();
+  }, [boardId, profile]);
 
   const handleCreateElement = async (element: ElementT) => {
     if (!profile?.id) return;
@@ -149,6 +155,8 @@ export const useBoardStore = ({ boardId }: useBoardEventsProps) => {
     loading,
 
     profile,
+
+    cameraInit,
 
     setElements,
 

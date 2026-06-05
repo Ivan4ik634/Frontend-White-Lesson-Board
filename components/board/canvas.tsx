@@ -1,5 +1,6 @@
 'use client';
 
+import { useBoardCursors } from '@/hooks/useBoardCursors';
 import { useCanvasCamera } from '@/hooks/useCanvas/useCanvasCamera';
 import { useCanvasCopied } from '@/hooks/useCanvas/useCanvasCopied';
 import { useCanvasDrop } from '@/hooks/useCanvas/useCanvasDrop';
@@ -9,7 +10,7 @@ import { useCanvasPen } from '@/hooks/useCanvas/useCanvasPen';
 import { useCanvasResize } from '@/hooks/useCanvas/useCanvasResize';
 import { useCanvasSelection } from '@/hooks/useCanvas/useCanvasSelection';
 import { useCanvasTrigger } from '@/hooks/useCanvas/useCanvasTrigger';
-import { CursorsCanvas, ElementT, EventsCanvas } from '@/types/Element';
+import { ElementT, EventsCanvas } from '@/types/Element';
 import { UserT } from '@/types/UserT';
 import { useRef, useState } from 'react';
 import { BoardTool, BoardToolRail } from './BoardToolRail';
@@ -18,27 +19,30 @@ import CanvasElements from './CanvasElements';
 import CanvasSelection from './CanvasSelection';
 
 type BoardCanvasProps = {
+  boardId: string;
   events: EventsCanvas;
   initData: ElementT[];
+  cameraInit?: { x: number; y: number };
   setElements: React.Dispatch<React.SetStateAction<ElementT[]>>;
-  cursors?: CursorsCanvas[];
-  onCursorMove?: (point: { x: number; y: number }) => void;
   profile?: UserT | null;
+  mode: 'demo' | 'board';
 };
 
 export function Canvas({
+  boardId,
   events,
-  cursors = [],
-  onCursorMove,
+  cameraInit,
   profile = null,
   setElements,
+  mode,
   initData,
 }: BoardCanvasProps) {
   const [tool, setTool] = useState<BoardTool>('grab');
   const canvasRef = useRef<HTMLDivElement | null>(null);
 
   const { camera, ref, handleCaremaStart, handleZoom, zoom, handleCameraMove, handleCameraEnd } =
-    useCanvasCamera(tool);
+    useCanvasCamera(tool, cameraInit);
+  useBoardCursors({ boardId, mode, canvasRef, zoom });
 
   const {
     elements,
@@ -111,14 +115,15 @@ export function Canvas({
     zoom,
     resizeRef,
   });
-  const { handleEraserStart, handleEraserMove, handleEraserEnd } = useCanvasEraser({
-    zoom,
-    elements,
-    setElements,
-    canvasRef,
-    events,
-    tool,
-  });
+  const { handleEraserStart, handleEraserMove, elementsIdsRemove, handleEraserEnd } =
+    useCanvasEraser({
+      zoom,
+      elements,
+      setElements,
+      canvasRef,
+      events,
+      tool,
+    });
 
   const { handleCanvasTriggerStart, handleCanvasTriggerMove, handleCanvasTriggerEnd } =
     useCanvasTrigger({
@@ -146,34 +151,19 @@ export function Canvas({
     });
   const editingEl = getEditingElement();
 
-  const handlePointerMove = (e: React.PointerEvent<HTMLDivElement>) => {
-    const canvas = canvasRef.current;
-
-    if (canvas && onCursorMove) {
-      const rect = canvas.getBoundingClientRect();
-
-      onCursorMove({
-        x: (e.clientX - rect.left) / zoom,
-        y: (e.clientY - rect.top) / zoom,
-      });
-    }
-
-    handleCanvasTriggerMove(e);
-  };
-
   return (
     <div
       ref={ref}
       style={{
         backgroundSize: `${40 * zoom}px ${40 * zoom}px`,
-        backgroundImage: `
-      linear-gradient(to right, #ddd 1px, transparent 1px),
-      linear-gradient(to bottom, #ddd 1px, transparent 1px)
-    `,
         backgroundPosition: `${camera.x}px ${camera.y}px`,
+        backgroundImage: `
+    radial-gradient(circle, rgba(120, 120, 120, 0.6) 1px, transparent 1px)
+  `,
       }}
       onWheel={handleZoom}
       onPointerDown={(e) => {
+        e.stopPropagation();
         if (tool === 'text') {
           handleTextStart(e);
           return;
@@ -181,7 +171,7 @@ export function Canvas({
 
         handleCanvasTriggerStart(e);
       }}
-      onPointerMove={handlePointerMove}
+      onPointerMove={handleCanvasTriggerMove}
       onPointerUp={handleCanvasTriggerEnd}
       onPointerCancel={handleCanvasTriggerEnd}
       className="relative h-full w-full touch-none overflow-hidden rounded-lg border border-border bg-background shadow-sm sm:rounded-xl">
@@ -201,11 +191,12 @@ export function Canvas({
           selectedElementMove={selectedElementMove}
           selectedElementIds={selectedElementIds}
           elements={elements}
+          elementsIdsRemove={elementsIdsRemove}
           editingId={editingId}
           startEditing={startEditing}
         />
         <CanvasSelection isSelectionRef={isSelectionRef} selection={selection} />
-        <CanvasCursors profile={profile} cursors={cursors} zoom={zoom} />
+        <CanvasCursors profile={profile} zoom={zoom} />
         {editingId && (
           <textarea
             ref={inputRef}
@@ -225,9 +216,10 @@ export function Canvas({
             className="absolute  bg-transparent outline-none resize-none border-none p-0 m-0 overflow-hidden"
             style={{
               position: 'absolute',
+              whiteSpace: 'nowrap',
               left: editingEl?.type === 'text' ? editingEl?.x : 0,
               top: editingEl?.type === 'text' ? editingEl?.y : 0,
-              width: `${Math.max(draft.length * 10, 20)}px`,
+              width: `${Math.max(draft.length * 15, 20)}px`,
               minHeight: 50,
 
               transformOrigin: 'top left',

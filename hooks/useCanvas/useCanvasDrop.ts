@@ -51,7 +51,6 @@ export const useCanvasDrop = ({
       elements,
     });
 
-    console.log(hit);
     if (!hit) {
       setSelectedElementIds([]);
 

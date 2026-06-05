@@ -75,7 +75,7 @@ export function HomeLanding() {
       </header>
       <main className="flex flex-1 flex-col items-center justify-center px-4 py-8 sm:px-8 sm:py-14">
         <section className="flex w-full max-w-xl flex-col justify-center">
-          <h1 className="text-balance text-3xl font-semibold tracking-tight text-foreground sm:text-4xl lg:text-[2.5rem] lg:leading-[1.15]">
+          <h1 className="text-3xl font-semibold tracking-tight text-foreground sm:text-4xl lg:text-[2.5rem] lg:leading-[1.15]">
             Ready for your next shared board?
           </h1>
           <p className="mt-4 max-w-md text-pretty text-base leading-relaxed text-muted-foreground sm:text-lg">

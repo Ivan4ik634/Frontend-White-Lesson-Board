@@ -1,13 +1,19 @@
 import { BoardTool } from '@/components/board/BoardToolRail';
 import { PointerEvent, useEffect, useRef, useState, WheelEvent } from 'react';
 
-export const useCanvasCamera = (tool: BoardTool) => {
+export const useCanvasCamera = (tool: BoardTool, cameraInit?: { x: number; y: number }) => {
   const [camera, setCamera] = useState({ x: 0, y: 0 });
   const [zoom, setZoom] = useState(1);
   const ref = useRef<HTMLDivElement>(null);
 
   const lastPointRef = useRef({ x: 0, y: 0 });
   const isDraggingRef = useRef(false);
+
+  useEffect(() => {
+    if (cameraInit) {
+      setCamera(cameraInit);
+    }
+  }, [cameraInit]);
 
   const handleCaremaStart = (e: PointerEvent<HTMLDivElement>) => {
     if (tool !== 'grab') return;
@@ -35,10 +41,10 @@ export const useCanvasCamera = (tool: BoardTool) => {
   const handleZoom = (e: WheelEvent<HTMLDivElement>) => {
     e.preventDefault();
     if (!e.ctrlKey) return;
-    if (e.deltaY > 0 && zoom > 0.1) {
+    if (e.deltaY > 0 && zoom > 0.3) {
       setZoom((prev) => Number((prev - 0.1).toFixed(1)));
     }
-    if (e.deltaY < 0 && zoom < 2) {
+    if (e.deltaY < 0 && zoom < 1.5) {
       setZoom((prev) => Number((prev + 0.1).toFixed(1)));
     }
   };

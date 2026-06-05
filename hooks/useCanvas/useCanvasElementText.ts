@@ -41,7 +41,7 @@ export const useCanvasElementText = ({
     setEditingId(id);
     setDraft('');
 
-    await events.handleCreateElement(element);
+    events.handleCreateElement(element);
 
     setTimeout(() => {
       inputRef.current?.focus();
@@ -57,7 +57,7 @@ export const useCanvasElementText = ({
 
     setTimeout(() => {
       inputRef.current?.focus();
-    }, 0);
+    }, 100);
   };
 
   const finishEditing = async () => {

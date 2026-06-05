@@ -79,7 +79,6 @@ export const useCanvasElementObject = ({ events, canvasRef, zoom, tool, setEleme
           : el,
       ),
     );
-    console.log('SEND UPDATE', element.id, element.width, element.height);
     await events.handleUpdateElement(element);
   };
 

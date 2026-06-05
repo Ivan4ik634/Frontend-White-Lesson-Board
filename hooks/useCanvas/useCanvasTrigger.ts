@@ -65,6 +65,11 @@ export const useCanvasTrigger = ({
   handleResizeEnd,
 }: Props) => {
   const handleCanvasTriggerStart = (e: PointerEvent<HTMLDivElement>) => {
+    const target = e.target as HTMLElement;
+
+    if (target.closest('[data-text-element="true"]')) {
+      return;
+    }
     e.currentTarget.setPointerCapture(e.pointerId);
 
     if (e.ctrlKey) {

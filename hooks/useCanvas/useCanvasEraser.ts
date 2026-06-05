@@ -1,8 +1,8 @@
 import { BoardTool } from '@/components/board/BoardToolRail';
 import { ElementT, EventsCanvas } from '@/types/Element';
 import { getWorld } from '@/utils/canvas';
-import { isIntersecting } from '@/utils/isIntersecting';
-import { PointerEvent, RefObject, useRef, useState } from 'react';
+import { isPointInsideElement } from '@/utils/isPointInsideElement';
+import { PointerEvent, RefObject, useEffect, useRef, useState } from 'react';
 
 interface Props {
   zoom: number;
@@ -21,6 +21,7 @@ export const useCanvasEraser = ({
   tool,
 }: Props) => {
   const [isErasing, setIsErasing] = useState(false);
+  const [elementsIdsRemove, setElementsIdsRemove] = useState<string[]>([]);
   const lastPointRef = useRef({ x: 0, y: 0 });
   const handleEraserStart = (e: PointerEvent<HTMLDivElement>) => {
     if (tool !== 'eraser') return;
@@ -36,22 +37,38 @@ export const useCanvasEraser = ({
     if (tool !== 'eraser') return;
 
     const { x, y } = getWorld({ e, zoom, canvasRef });
+
+    const newIds: string[] = [];
+
     for (const element of elements) {
-      if (isIntersecting({ start: lastPointRef.current, end: { x, y }, el: element })) {
-        setElements((prev) => prev.filter((el) => el.id !== element.id));
-        await events.handleDeleteElement(element.id);
-        setTimeout(() => {}, 1000);
+      if (
+        isPointInsideElement({
+          x,
+          y,
+          el: element,
+        })
+      ) {
+        newIds.push(element.id);
       }
     }
-  };
 
-  const handleEraserEnd = () => {
+    setElementsIdsRemove((prev) => [...new Set([...prev, ...newIds])]);
+  };
+  useEffect(() => {
+    console.log(elementsIdsRemove);
+  }, [elementsIdsRemove]);
+  const handleEraserEnd = async () => {
     setIsErasing(false);
+    for (const id of elementsIdsRemove) {
+      setElements((prev) => prev.filter((el) => el.id !== id));
+      await events.handleDeleteElement(id);
+    }
   };
   return {
     isErasing,
     handleEraserStart,
     handleEraserMove,
+    elementsIdsRemove,
     handleEraserEnd,
   };
 };

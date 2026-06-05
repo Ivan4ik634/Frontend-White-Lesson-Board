@@ -9,6 +9,7 @@ interface Props {
   startEditing: (id: string) => void;
   selectedElementIds: string[];
   selectedElementMove: string;
+  elementsIdsRemove: string[];
   handleResizeStart: (
     e: PointerEvent<HTMLDivElement>,
     corner: 'top-left' | 'top-right' | 'bottom-left' | 'bottom-right',
@@ -21,6 +22,7 @@ const CanvasElements: FC<Props> = ({
   selectedElementIds,
   selectedElementMove,
   editingId,
+  elementsIdsRemove,
   startEditing,
   handleResizeStart,
 }) => {
@@ -31,11 +33,14 @@ const CanvasElements: FC<Props> = ({
       return (
         <div
           key={el.id}
+          onPointerDown={(e) => {
+            !selectedElementIds.includes(el.id) && e.stopPropagation();
+          }}
           onDoubleClick={(e) => {
             e.stopPropagation();
             startEditing(el.id);
           }}
-          className={`absolute no-select whitespace-pre ${selectedElementIds.includes(el.id) ? 'border-2 border-blue-500' : ''}`}
+          className={`absolute z-10 ${elementsIdsRemove.includes(el.id) ? 'opacity-50' : ''} no-select whitespace-pre ${selectedElementIds.includes(el.id) ? 'border-2 border-blue-500' : ''}`}
           style={{
             left: el.x,
 
@@ -48,7 +53,9 @@ const CanvasElements: FC<Props> = ({
     }
 
     return el.type === 'pen' ? (
-      <svg key={el.id} className={` no-select absolute  overflow-visible pointer-events-none`}>
+      <svg
+        key={el.id}
+        className={`${elementsIdsRemove?.includes(el.id) ? 'opacity-50' : ''} z-10  no-select absolute  overflow-visible pointer-events-none`}>
         <polyline
           points={el.points.map((p) => `${p.x},${p.y}`).join(' ')}
           fill="none"
@@ -67,7 +74,7 @@ const CanvasElements: FC<Props> = ({
               height: el.height,
               top: el.y,
             }}
-            className={`z-10 border-[1px] border-blue-500`}>
+            className={`z-10 ${elementsIdsRemove.includes(el.id) ? 'opacity-50' : ''}  border-[1px] border-blue-500`}>
             <div className="relative w-full h-full">
               <div
                 onPointerDown={(e) => handleResizeStart(e, 'top-left', el.id)}
@@ -97,7 +104,7 @@ const CanvasElements: FC<Props> = ({
             height: el.height,
             top: el.y,
           }}
-          className={`${selectedElementMove === el.id ? 'cursor-move' : ''} no-select border-2 border-black  ${
+          className={`${elementsIdsRemove.includes(el.id) ? 'opacity-50' : ''} ${selectedElementMove === el.id ? 'cursor-move' : ''} no-select border-2 border-black  ${
             el.type === 'rectangle' ? 'rounded-[5px]' : 'rounded-full'
           } `}
         />

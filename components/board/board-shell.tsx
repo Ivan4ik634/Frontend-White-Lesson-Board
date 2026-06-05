@@ -1,6 +1,5 @@
 'use client';
 
-import { useBoardCursors } from '@/hooks/useBoardCursors';
 import { useBoardStore } from '@/hooks/useBoardStore';
 import BoardHeader from './BoardHeader';
 import { Canvas } from './canvas';
@@ -10,8 +9,9 @@ type BoardShellProps = {
 };
 
 export function BoardShell({ boardId }: BoardShellProps) {
-  const { events, elements, profile, setElements, loading } = useBoardStore({ boardId });
-  const { cursors, handleCursorMove } = useBoardCursors({ boardId });
+  const { events, elements, profile, setElements, loading, cameraInit } = useBoardStore({
+    boardId,
+  });
 
   if (loading) {
     return (
@@ -26,12 +26,13 @@ export function BoardShell({ boardId }: BoardShellProps) {
       <BoardHeader boardId={boardId} />
       <div className="min-h-0 flex-1 p-1.5 pb-[calc(4.5rem+env(safe-area-inset-bottom))] sm:p-2 md:p-3">
         <Canvas
+          mode="board"
           profile={profile}
           initData={elements}
+          cameraInit={cameraInit}
           setElements={setElements}
           events={events}
-          cursors={cursors}
-          onCursorMove={handleCursorMove}
+          boardId={boardId}
         />
       </div>
     </div>

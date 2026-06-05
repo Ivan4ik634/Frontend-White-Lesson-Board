@@ -22,16 +22,8 @@ const BoardHeader: FC<Props> = ({ boardId }) => {
   const { users } = useUsersInBoard();
   const { onlineUsers } = useOnlineUsers();
 
-  const {
-    board,
-    isOwner,
-    currentUserId,
-    adminUsers,
-    leaving,
-    kickUser,
-    leaveBoard,
-    kickingUserId,
-  } = useBoardAccess({ boardId });
+  const { isOwner, currentUserId, adminUsers, leaving, kickUser, leaveBoard, kickingUserId } =
+    useBoardAccess({ boardId });
 
   return (
     <header className="flex min-h-12 shrink-0 items-center justify-between gap-2 border-b border-border bg-background px-2 sm:h-11 sm:min-h-11">

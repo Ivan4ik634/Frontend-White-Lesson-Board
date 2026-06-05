@@ -2,18 +2,18 @@
 
 import { colors } from '@/configs/colors';
 import { useOnlineUsers } from '@/store/onlineUsers';
-import { CursorsCanvas } from '@/types/Element';
+import { useUsersInBoard } from '@/store/useUsersInBoard';
 import { UserT } from '@/types/UserT';
 import { MousePointer2 } from 'lucide-react';
 import { FC } from 'react';
 
 interface Props {
-  cursors: CursorsCanvas[];
   profile: UserT | null;
   zoom: number;
 }
 
-const CanvasCursors: FC<Props> = ({ cursors, profile, zoom }) => {
+const CanvasCursors: FC<Props> = ({ profile, zoom }) => {
+  const { users: cursors } = useUsersInBoard();
   const { onlineUsers } = useOnlineUsers();
   return cursors.map((cursor, i) => {
     const color = colors[i % colors.length];
@@ -29,14 +29,14 @@ const CanvasCursors: FC<Props> = ({ cursors, profile, zoom }) => {
           transformOrigin: 'top left',
         }}
         className="pointer-events-none flex items-center gap-x-3">
-        <MousePointer2 style={{ color: color.value }} />
+        <MousePointer2 style={{ fill: color.value, color: color.value }} />
         <div
           style={{
             width: `${Math.max(cursor.user_id.name.length * 12, 20)}px`,
             backgroundColor: color.value,
           }}
           className="p-3 flex justify-center rounded-[5px]">
-          {cursor.user_id.name}
+          <p className="text-white">{cursor.user_id.name}</p>
         </div>
       </div>
     );
