@@ -44,6 +44,8 @@ const CanvasElements: FC<Props> = ({
           style={{
             left: el.x,
 
+            color: el.color,
+
             top: el.y,
             visibility: isEditing ? 'hidden' : 'visible',
           }}>
@@ -59,7 +61,7 @@ const CanvasElements: FC<Props> = ({
         <polyline
           points={el.points.map((p) => `${p.x},${p.y}`).join(' ')}
           fill="none"
-          stroke={`${selectedElementIds.includes(el.id) ? 'blue' : 'black'}`}
+          stroke={`${selectedElementIds.includes(el.id) ? 'blue' : el.color}`}
           strokeWidth={3}
         />
       </svg>
@@ -100,11 +102,12 @@ const CanvasElements: FC<Props> = ({
           style={{
             position: 'absolute',
             left: el.x,
+            borderColor: el.color,
             width: el.width,
             height: el.height,
             top: el.y,
           }}
-          className={`${elementsIdsRemove.includes(el.id) ? 'opacity-50' : ''} ${selectedElementMove === el.id ? 'cursor-move' : ''} no-select border-2 border-black  ${
+          className={`${elementsIdsRemove.includes(el.id) ? 'opacity-50' : ''} border-2 ${selectedElementMove === el.id ? 'cursor-move' : ''} no-select   ${
             el.type === 'rectangle' ? 'rounded-[5px]' : 'rounded-full'
           } `}
         />

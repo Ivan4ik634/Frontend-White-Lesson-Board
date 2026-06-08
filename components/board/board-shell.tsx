@@ -24,7 +24,7 @@ export function BoardShell({ boardId }: BoardShellProps) {
   return (
     <div className="flex h-dvh flex-col overflow-hidden bg-muted/35">
       <BoardHeader boardId={boardId} />
-      <div className="min-h-0 flex-1 p-1.5 pb-[calc(4.5rem+env(safe-area-inset-bottom))] sm:p-2 md:p-3">
+      <div className="min-h-0 flex-1 p-1.5 pb-2 sm:p-2 md:p-3">
         <Canvas
           mode="board"
           profile={profile}

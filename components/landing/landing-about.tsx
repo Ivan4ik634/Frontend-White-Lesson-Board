@@ -6,7 +6,7 @@ export function LandingAbout() {
       <div className="mx-auto grid max-w-7xl gap-12 lg:grid-cols-[0.85fr_1.15fr] lg:items-start">
         <div>
           <p className="text-sm font-semibold uppercase tracking-[0.18em] text-slate-500">About</p>
-          <h2 className="mt-4 text-balance text-3xl font-semibold tracking-normal text-slate-950 sm:text-4xl">
+          <h2 className="mt-4 text-3xl font-semibold tracking-normal text-slate-950 sm:text-4xl">
             A calmer way for people to work together.
           </h2>
           <p className="mt-5 text-lg leading-8 text-slate-600">

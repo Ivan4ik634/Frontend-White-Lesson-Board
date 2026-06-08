@@ -8,7 +8,7 @@ export function LandingFeatures() {
           <p className="text-sm font-semibold uppercase tracking-[0.18em] text-slate-500">
             Features
           </p>
-          <h2 className="mt-4 text-balance text-3xl font-semibold tracking-normal sm:text-4xl">
+          <h2 className="mt-4  text-3xl font-semibold tracking-normal sm:text-4xl">
             Everything teams need to turn ideas into clear, structured outcomes.
           </h2>
           <p className="mt-5 text-lg leading-8 text-slate-600">

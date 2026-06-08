@@ -12,6 +12,7 @@ interface Props {
   events: EventsCanvas;
   elements: ElementT[];
   setElements: React.Dispatch<React.SetStateAction<ElementT[]>>;
+  color: string;
 }
 
 export const useCanvasElement = ({
@@ -19,6 +20,7 @@ export const useCanvasElement = ({
   elements,
   events,
   zoom,
+  color,
   tool,
   canvasRef,
 }: Props) => {
@@ -30,6 +32,7 @@ export const useCanvasElement = ({
     canvasRef,
     zoom,
     tool,
+    color,
     events,
     setElements,
   });
@@ -42,7 +45,7 @@ export const useCanvasElement = ({
     setDraft,
     inputRef,
     getEditingElement,
-  } = useCanvasElementText({ zoom, events, canvasRef, tool, setElements, elements });
+  } = useCanvasElementText({ zoom, color, events, canvasRef, tool, setElements, elements });
 
   return {
     editingId,

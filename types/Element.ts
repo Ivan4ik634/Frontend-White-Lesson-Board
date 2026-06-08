@@ -8,12 +8,16 @@ export type ElementT =
       x: number;
       y: number;
 
+      color: string;
+
       width: number;
       height: number;
     }
   | {
       id: string;
       type: 'text';
+
+      color: string;
 
       x: number;
       y: number;
@@ -24,6 +28,8 @@ export type ElementT =
   | {
       id: string;
       type: 'pen';
+
+      color: string;
 
       points: {
         x: number;

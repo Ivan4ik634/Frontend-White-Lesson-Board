@@ -20,7 +20,7 @@ export function LandingHero() {
             Built for work, study, friends, and every shared plan
           </div>
 
-          <h1 className="mt-7 text-balance text-5xl font-semibold tracking-normal text-slate-950 sm:text-6xl lg:text-7xl">
+          <h1 className="mt-7  text-5xl font-semibold tracking-normal text-slate-950 sm:text-6xl lg:text-7xl">
             A shared whiteboard for teamwork.
           </h1>
           <p className="mx-auto mt-6 max-w-2xl text-pretty text-lg leading-8 text-slate-600 sm:text-xl">
@@ -31,7 +31,7 @@ export function LandingHero() {
           <div className="mt-9 flex flex-col items-center justify-center gap-3 sm:flex-row">
             <Button
               asChild
-              className="h-12 gap-2 rounded-lg bg-slate-950 px-6 text-base font-medium text-white shadow-sm transition hover:-translate-y-0.5 hover:bg-slate-800">
+              className="h-12 gap-2 rounded-lg w-full bg-slate-950 px-6 text-base font-medium text-white shadow-sm transition hover:-translate-y-0.5 hover:bg-slate-800">
               <Link href={PAGES.REGISTER}>
                 Start Teamwork
                 <ArrowRight className="size-4" aria-hidden />
@@ -40,7 +40,7 @@ export function LandingHero() {
             <Button
               asChild
               variant="outline"
-              className="h-12 gap-2 rounded-lg border-slate-200 bg-white px-6 text-base font-medium text-slate-950 shadow-sm transition hover:-translate-y-0.5 hover:bg-slate-50">
+              className="h-12 gap-2 rounded-lg w-full border-slate-200 bg-white px-6 text-base font-medium text-slate-950 shadow-sm transition hover:-translate-y-0.5 hover:bg-slate-50">
               <Link href="#about">
                 <CirclePlay className="size-4" aria-hidden />
                 Learn More

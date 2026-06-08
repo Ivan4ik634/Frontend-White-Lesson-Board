@@ -20,9 +20,18 @@ interface Props {
   canvasRef: RefObject<HTMLDivElement | null>;
   events: EventsCanvas;
   elements: ElementT[];
+  color: string;
 }
 
-export const useCanvasPen = ({ zoom, elements, events, tool, canvasRef, setElements }: Props) => {
+export const useCanvasPen = ({
+  zoom,
+  color,
+  elements,
+  events,
+  tool,
+  canvasRef,
+  setElements,
+}: Props) => {
   const pathIdRef = useRef('');
   const isDrawingRef = useRef(false);
 
@@ -39,6 +48,7 @@ export const useCanvasPen = ({ zoom, elements, events, tool, canvasRef, setEleme
 
     const element: ElementT = {
       id,
+      color,
       type: 'pen',
       points: [point],
     };

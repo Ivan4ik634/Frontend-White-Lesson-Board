@@ -16,6 +16,7 @@ import { useRef, useState } from 'react';
 import { BoardTool, BoardToolRail } from './BoardToolRail';
 import CanvasCursors from './CanvasCursors';
 import CanvasElements from './CanvasElements';
+import CanvasPickColors from './CanvasPickColors';
 import CanvasSelection from './CanvasSelection';
 
 type BoardCanvasProps = {
@@ -39,6 +40,7 @@ export function Canvas({
 }: BoardCanvasProps) {
   const [tool, setTool] = useState<BoardTool>('grab');
   const canvasRef = useRef<HTMLDivElement | null>(null);
+  const [color, setColor] = useState('#000000');
 
   const { camera, ref, handleCaremaStart, handleZoom, zoom, handleCameraMove, handleCameraEnd } =
     useCanvasCamera(tool, cameraInit);
@@ -61,6 +63,7 @@ export function Canvas({
     elements: initData,
     setElements,
     canvasRef,
+    color,
     events,
     zoom,
     setTool,
@@ -87,6 +90,7 @@ export function Canvas({
     zoom,
     elements: initData,
     events,
+    color,
     tool,
     canvasRef,
     setElements,
@@ -175,7 +179,8 @@ export function Canvas({
       onPointerUp={handleCanvasTriggerEnd}
       onPointerCancel={handleCanvasTriggerEnd}
       className="relative h-full w-full touch-none overflow-hidden rounded-lg border border-border bg-background shadow-sm sm:rounded-xl">
-      <BoardToolRail activeTool={tool} onToolChange={setTool} />
+      <BoardToolRail color={color} setColor={setColor} activeTool={tool} onToolChange={setTool} />
+      <CanvasPickColors color={color} setColor={setColor} />
 
       <div
         ref={canvasRef}
@@ -197,6 +202,7 @@ export function Canvas({
         />
         <CanvasSelection isSelectionRef={isSelectionRef} selection={selection} />
         <CanvasCursors profile={profile} zoom={zoom} />
+
         {editingId && (
           <textarea
             ref={inputRef}
@@ -213,10 +219,12 @@ export function Canvas({
                 finishEditing();
               }
             }}
-            className="absolute  bg-transparent outline-none resize-none border-none p-0 m-0 overflow-hidden"
+            className="absolute bg-transparent outline-none resize-none border-none p-0 m-0 overflow-hidden"
             style={{
               position: 'absolute',
               whiteSpace: 'nowrap',
+              color: editingEl?.color,
+
               left: editingEl?.type === 'text' ? editingEl?.x : 0,
               top: editingEl?.type === 'text' ? editingEl?.y : 0,
               width: `${Math.max(draft.length * 15, 20)}px`,

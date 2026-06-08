@@ -10,11 +10,13 @@ interface Props {
   elements: ElementT[];
   canvasRef: RefObject<HTMLDivElement | null>;
   events: EventsCanvas;
+  color: string;
 }
 export const useCanvasElementText = ({
   zoom,
   tool,
   setElements,
+  color,
   elements,
   canvasRef,
   events,
@@ -33,6 +35,7 @@ export const useCanvasElementText = ({
       type: 'text',
       x,
       y,
+      color,
       text: '',
     };
 

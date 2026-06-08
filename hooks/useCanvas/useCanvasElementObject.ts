@@ -9,8 +9,16 @@ interface Props {
   setElements: React.Dispatch<React.SetStateAction<ElementT[]>>;
   canvasRef: RefObject<HTMLDivElement | null>;
   events: EventsCanvas;
+  color: string;
 }
-export const useCanvasElementObject = ({ events, canvasRef, zoom, tool, setElements }: Props) => {
+export const useCanvasElementObject = ({
+  events,
+  canvasRef,
+  zoom,
+  color,
+  tool,
+  setElements,
+}: Props) => {
   const startPointRef = useRef({ x: 0, y: 0 });
   const objectIdRef = useRef<string>('');
   const isDrawingRef = useRef(false);
@@ -33,6 +41,7 @@ export const useCanvasElementObject = ({ events, canvasRef, zoom, tool, setEleme
       width: 0,
       height: 0,
       type,
+      color,
     };
     setElements((prev) => [...prev, element]);
 
@@ -64,6 +73,7 @@ export const useCanvasElementObject = ({ events, canvasRef, zoom, tool, setEleme
       y: height < 0 ? y : start.y,
 
       type: type,
+      color,
 
       width: type === 'circle' ? size : Math.abs(width),
       height: type === 'circle' ? size : Math.abs(height),
