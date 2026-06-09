@@ -40,7 +40,7 @@ export function Canvas({
 }: BoardCanvasProps) {
   const [tool, setTool] = useState<BoardTool>('grab');
   const canvasRef = useRef<HTMLDivElement | null>(null);
-  const [color, setColor] = useState('#000000');
+  const [color, setColor] = useState('#111827');
 
   const { camera, ref, handleCaremaStart, handleZoom, zoom, handleCameraMove, handleCameraEnd } =
     useCanvasCamera(tool, cameraInit);
