@@ -15,9 +15,11 @@ export function isPointInsideElement({ x, y, el }: { x: number; y: number; el: E
 
     case 'text':
       // временно хотя бы по точке текста
-      return Math.abs(x - el.x) < 10 && Math.abs(y - el.y) < 10;
+      return Math.max(el.text.length * 10, 20) && Math.abs(y - el.y) < 10;
 
     case 'pen':
-      return el.points.some((point) => Math.hypot(point.x - x, point.y - y) < 5);
+      return el.points.some((p) => {
+        return Math.abs(x - p.x) < 20 && Math.abs(y - p.y) < 20;
+      });
   }
 }

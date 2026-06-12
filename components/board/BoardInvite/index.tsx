@@ -35,14 +35,42 @@ export function BoardInvite({ boardId }: BoardInviteProps) {
       setJoining(true);
       setFailed(false);
 
+      const { data } = await boardUserService.findInBoard(boardId);
+      if (!data) {
+        setFailed(true);
+        setJoining(false);
+        toast.error('Board not found');
+        return;
+      }
+
+      if (data.some((item) => item.user_id.id === userId)) {
+        router.replace(PAGES.BOARD(boardId));
+        return;
+      }
+      if (data.length >= 4) {
+        setFailed(true);
+        setJoining(false);
+        toast.error('Board is full');
+
+        router.replace(PAGES.HOME);
+        return;
+      }
+
       const { error } = await boardUserService.create(boardId, userId);
 
+      console.log(error);
       if (error) {
         if (error.code === '23505') {
           router.replace(PAGES.BOARD(boardId));
           return;
         }
-
+        if (error.code === '42501') {
+          toast.error('Board private');
+          setFailed(true);
+          setJoining(false);
+          router.replace(PAGES.HOME);
+          return;
+        }
         setFailed(true);
         setJoining(false);
         toast.error(error.message);

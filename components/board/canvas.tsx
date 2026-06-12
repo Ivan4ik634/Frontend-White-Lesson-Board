@@ -18,6 +18,7 @@ import CanvasCursors from './CanvasCursors';
 import CanvasElements from './CanvasElements';
 import CanvasPickColors from './CanvasPickColors';
 import CanvasSelection from './CanvasSelection';
+import CanvasZoom from './CanvasZoom';
 
 type BoardCanvasProps = {
   boardId: string;
@@ -42,8 +43,18 @@ export function Canvas({
   const canvasRef = useRef<HTMLDivElement | null>(null);
   const [color, setColor] = useState('#111827');
 
-  const { camera, ref, handleCaremaStart, handleZoom, zoom, handleCameraMove, handleCameraEnd } =
-    useCanvasCamera(tool, cameraInit);
+  const {
+    camera,
+    ref,
+    addZoom,
+    handleCaremaStart,
+    handleZoom,
+    zoom,
+    handleCameraMove,
+    handleCameraEnd,
+    handleTouchMove,
+    handleTouchEnd,
+  } = useCanvasCamera(tool, canvasRef, cameraInit);
   useBoardCursors({ boardId, mode, canvasRef, zoom });
 
   const {
@@ -178,10 +189,12 @@ export function Canvas({
       onPointerMove={handleCanvasTriggerMove}
       onPointerUp={handleCanvasTriggerEnd}
       onPointerCancel={handleCanvasTriggerEnd}
+      onTouchMove={handleTouchMove}
+      onTouchEnd={handleTouchEnd}
       className="relative h-full w-full touch-none overflow-hidden rounded-lg border border-border bg-background shadow-sm sm:rounded-xl">
       <BoardToolRail color={color} setColor={setColor} activeTool={tool} onToolChange={setTool} />
       <CanvasPickColors color={color} setColor={setColor} />
-
+      <CanvasZoom addZoom={addZoom} zoom={zoom} />
       <div
         ref={canvasRef}
         style={{

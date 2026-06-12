@@ -60,19 +60,23 @@ export const useCanvasElementText = ({
 
     setTimeout(() => {
       inputRef.current?.focus();
-    }, 100);
+    }, 0);
   };
 
   const finishEditing = async () => {
     const current = elements.find((el) => el.id === editingId);
 
-    if (!current || !(current.type === 'text')) return;
+    if (!current || current.type !== 'text') return;
 
     setElements((prev) => prev.map((el) => (el.id === editingId ? { ...el, text: draft } : el)));
 
-    await events.handleUpdateElement({ ...current, text: draft });
     setEditingId(null);
     setDraft('');
+
+    await events.handleUpdateElement({
+      ...current,
+      text: draft,
+    });
   };
 
   const getEditingElement = () => elements.find((e) => e.id === editingId);

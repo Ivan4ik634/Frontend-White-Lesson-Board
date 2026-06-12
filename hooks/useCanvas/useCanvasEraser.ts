@@ -63,6 +63,7 @@ export const useCanvasEraser = ({
       setElements((prev) => prev.filter((el) => el.id !== id));
       await events.handleDeleteElement(id);
     }
+    setElementsIdsRemove([]);
   };
   return {
     isErasing,

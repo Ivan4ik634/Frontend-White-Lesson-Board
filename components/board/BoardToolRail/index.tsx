@@ -60,6 +60,7 @@ export function BoardToolRail({ activeTool, color, setColor, onToolChange }: Boa
         <Popover>
           <PopoverTrigger>
             <Button
+              asChild
               className={'size-8 rounded-md text-muted-foreground hover:text-foreground sm:size-10'}
               variant="secondary">
               <IoIosColorFilter className="size-4" aria-hidden />
@@ -68,6 +69,7 @@ export function BoardToolRail({ activeTool, color, setColor, onToolChange }: Boa
           <PopoverContent className="bg-stone-200 w-auto flex-col p-2">
             {colors.map((c, i) => (
               <div
+                key={i}
                 className={`rounded-[5px] p-2 flex justify-center ${c.value === color ? 'bg-black/10' : ''}`}>
                 <div
                   onClick={() => setColor(c.value)}
