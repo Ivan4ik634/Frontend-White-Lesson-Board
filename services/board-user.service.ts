@@ -1,12 +1,8 @@
 import { supabase } from '@/lib/supabase';
-import { BoardUserT } from '@/types/Board';
+import { BoardUserT, BoardUserWithBoard } from '@/types/Board';
 import { PostgrestFilterBuilder } from '@supabase/supabase-js';
 
 export const boardUserService = {
-  findAll() {
-    return supabase.from('board_user').select('*');
-  },
-
   findInBoard(
     boardId: string,
   ): PostgrestFilterBuilder<any, any, any, BoardUserT[], 'board_user', unknown, 'GET'> {
@@ -29,6 +25,38 @@ export const boardUserService = {
       any,
       any,
       BoardUserT[],
+      'board_user',
+      unknown,
+      'GET'
+    >;
+  },
+  findAll(
+    user_id: string,
+  ): PostgrestFilterBuilder<any, any, any, BoardUserWithBoard[], 'board_user', unknown, 'GET'> {
+    return supabase
+      .from('board_user')
+      .select(
+        `id,
+        board_id(
+        title,
+        id,
+        image,
+        access,
+        description,
+        members_count,
+        created_at
+
+        ),
+        created_at,
+        x,
+        y,
+  user_id`,
+      )
+      .eq('user_id', user_id) as unknown as PostgrestFilterBuilder<
+      any,
+      any,
+      any,
+      BoardUserWithBoard[],
       'board_user',
       unknown,
       'GET'

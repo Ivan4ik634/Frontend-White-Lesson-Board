@@ -13,6 +13,7 @@ import {
 } from '@/components/ui/dialog';
 import { BoardUserT } from '@/types/Board';
 import { Shield, UserMinus } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 import { FC } from 'react';
 
 interface Props {
@@ -24,16 +25,18 @@ interface Props {
 }
 
 const DialogAdmin: FC<Props> = ({ isOwner, adminUsers, onlineUsers, kickUser, kickingUserId }) => {
+  const t = useTranslations('whiteboard');
+
   return isOwner ? (
     <Dialog>
       <DialogTrigger render={<Button variant="outline" size="icon-sm" />}>
         <Shield className="size-4" aria-hidden />
-        <span className="sr-only">Admin menu</span>
+        <span className="sr-only">{t('adminMenu')}</span>
       </DialogTrigger>
       <DialogContent className="max-w-sm max-sm:bottom-0 max-sm:left-0 max-sm:right-0 max-sm:top-auto max-sm:max-w-none max-sm:translate-x-0 max-sm:translate-y-0 max-sm:rounded-b-none">
         <DialogHeader>
-          <DialogTitle>Admin menu</DialogTitle>
-          <DialogDescription>Manage users connected to this board.</DialogDescription>
+          <DialogTitle>{t('adminMenu')}</DialogTitle>
+          <DialogDescription>{t('adminDescription')}</DialogDescription>
         </DialogHeader>
 
         <div className="grid max-h-72 gap-2 overflow-y-auto pr-1">
@@ -54,7 +57,7 @@ const DialogAdmin: FC<Props> = ({ isOwner, adminUsers, onlineUsers, kickUser, ki
                   <div className="min-w-0 flex-1">
                     <p className="truncate text-sm font-medium">{user.name ?? 'User'}</p>
                     <Badge variant={online ? 'secondary' : 'outline'} className="mt-1">
-                      {online ? 'Online' : 'Offline'}
+                      {online ? t('online') : t('offline')}
                     </Badge>
                   </div>
                   <Button
@@ -64,14 +67,14 @@ const DialogAdmin: FC<Props> = ({ isOwner, adminUsers, onlineUsers, kickUser, ki
                     disabled={kicking}
                     onClick={() => kickUser(user.id)}>
                     <UserMinus className="size-3.5" aria-hidden />
-                    {kicking ? 'Kicking...' : 'Kick'}
+                    {kicking ? t('kicking') : t('kick')}
                   </Button>
                 </div>
               );
             })
           ) : (
             <p className="rounded-lg border border-dashed border-border p-4 text-center text-sm text-muted-foreground">
-              No users to manage yet.
+              {t('noUsers')}
             </p>
           )}
         </div>

@@ -14,7 +14,7 @@ const CanvasPickColors: FC<Props> = ({ color, setColor }) => {
       onPointerDown={(event) => event.stopPropagation()}
       onPointerMove={(event) => event.stopPropagation()}
       onPointerUp={(event) => event.stopPropagation()}
-      className="top-2 bg-stone-200 hidden sm:flex z-100 rounded-[5px] right-2 absolute  gap-x-2 items-center p-2">
+      className="top-2 bg-stone-200 dark:bg-stone-800 hidden sm:flex z-20 rounded-[5px] right-2 absolute  gap-x-2 items-center p-2">
       {colors.map((c, i) => (
         <div
           key={i}

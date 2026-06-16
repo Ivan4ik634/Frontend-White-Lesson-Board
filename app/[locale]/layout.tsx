@@ -1,9 +1,14 @@
 import { Toaster } from '@/components/ui/sonner';
+import { routing } from '@/i18n/routing';
 import { siteConfig } from '@/lib/seo';
+import ThemeProvider from '@/providers/ThemeProvider';
 import '@excalidraw/excalidraw/index.css';
 import { Analytics } from '@vercel/analytics/next';
+import { NextIntlClientProvider, hasLocale } from 'next-intl';
+import { getMessages } from 'next-intl/server';
 import type { Metadata } from 'next';
-import './globals.css';
+import { notFound } from 'next/navigation';
+import '../globals.css';
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteConfig.url),
@@ -53,16 +58,32 @@ export const metadata: Metadata = {
   },
 };
 
-export default function RootLayout({
+export function generateStaticParams() {
+  return routing.locales.map((locale) => ({ locale }));
+}
+
+export default async function RootLayout({
   children,
+  params,
 }: Readonly<{
   children: React.ReactNode;
+  params: Promise<{ locale: string }>;
 }>) {
+  const { locale } = await params;
+
+  if (!hasLocale(routing.locales, locale)) {
+    notFound();
+  }
+
+  const messages = await getMessages();
+
   return (
-    <html lang="en" className="h-full antialiased">
+    <html lang={locale} className="h-full antialiased">
       <body className="min-h-full flex flex-col">
         <Analytics />
-        {children}
+        <NextIntlClientProvider messages={messages}>
+          <ThemeProvider>{children}</ThemeProvider>
+        </NextIntlClientProvider>
         <Toaster position="top-center" />
       </body>
     </html>

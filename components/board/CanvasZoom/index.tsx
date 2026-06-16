@@ -14,7 +14,7 @@ const CanvasZoom: FC<Props> = ({ zoom, addZoom }) => {
       onPointerDown={(event) => event.stopPropagation()}
       onPointerMove={(event) => event.stopPropagation()}
       onPointerUp={(event) => event.stopPropagation()}
-      className="hidden sm:flex right-2 border border-border bg-background/95  shadow-sm backdrop-blur rounded-[5px] p-3 bottom-2 absolute z-100 gap-x-3">
+      className="hidden sm:flex right-2 border border-border bg-background/95  shadow-sm backdrop-blur rounded-[5px] p-3 bottom-2 absolute z-20 gap-x-3">
       <Minus
         className={`cursor-pointer hover:opacity-100 opacity-75 transition-all duration-300 ${zoom > 0.3 ? 'hover:opacity-50 opacity-50' : ''}`}
         onClick={() => (zoom > 0.3 ? addZoom(-0.1) : '')}

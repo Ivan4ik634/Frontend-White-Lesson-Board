@@ -3,9 +3,10 @@
 import { Button } from '@/components/ui/button';
 import { PAGES } from '@/configs/PAGES';
 import { useProfile } from '@/hooks/useProfile';
+import { useRouter } from '@/i18n/navigation';
 import { boardUserService } from '@/services/board-user.service';
 import { Loader2 } from 'lucide-react';
-import { useRouter } from 'next/navigation';
+import { useTranslations } from 'next-intl';
 import { useEffect, useRef, useState } from 'react';
 import { toast } from 'sonner';
 
@@ -15,6 +16,7 @@ interface BoardInviteProps {
 
 export function BoardInvite({ boardId }: BoardInviteProps) {
   const router = useRouter();
+  const t = useTranslations('whiteboard');
   const { profile, loading, error: profileError } = useProfile();
   const [joining, setJoining] = useState(true);
   const [failed, setFailed] = useState(false);
@@ -39,7 +41,7 @@ export function BoardInvite({ boardId }: BoardInviteProps) {
       if (!data) {
         setFailed(true);
         setJoining(false);
-        toast.error('Board not found');
+        toast.error(t('boardNotFound'));
         return;
       }
 
@@ -50,7 +52,7 @@ export function BoardInvite({ boardId }: BoardInviteProps) {
       if (data.length >= 4) {
         setFailed(true);
         setJoining(false);
-        toast.error('Board is full');
+        toast.error(t('boardFull'));
 
         router.replace(PAGES.HOME);
         return;
@@ -65,7 +67,7 @@ export function BoardInvite({ boardId }: BoardInviteProps) {
           return;
         }
         if (error.code === '42501') {
-          toast.error('Board private');
+          toast.error(t('boardPrivate'));
           setFailed(true);
           setJoining(false);
           router.replace(PAGES.HOME);
@@ -77,7 +79,7 @@ export function BoardInvite({ boardId }: BoardInviteProps) {
         return;
       }
 
-      toast.success('Invitation accepted');
+      toast.success(t('invitationAccepted'));
       router.replace(PAGES.BOARD(boardId));
     }
 
@@ -92,12 +94,12 @@ export function BoardInvite({ boardId }: BoardInviteProps) {
         ) : null}
         <div className="space-y-2">
           <h1 className="text-balance text-2xl font-semibold tracking-tight">
-            {failed ? 'Could not accept invite' : 'Joining board'}
+            {failed ? t('inviteFailedTitle') : t('joiningTitle')}
           </h1>
           <p className="text-pretty text-sm leading-6 text-muted-foreground">
             {failed
-              ? 'Please try again or ask for a new invite link.'
-              : 'Your invite is being accepted.'}
+              ? t('inviteFailedDescription')
+              : t('joiningDescription')}
           </p>
         </div>
         {failed ? (
@@ -110,7 +112,7 @@ export function BoardInvite({ boardId }: BoardInviteProps) {
               setFailed(false);
               setAttempt((value) => value + 1);
             }}>
-            Try again
+            {t('tryAgain')}
           </Button>
         ) : null}
       </section>

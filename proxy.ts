@@ -1,29 +1,57 @@
 import type { NextRequest } from 'next/server';
 import { NextResponse } from 'next/server';
+import createMiddleware from 'next-intl/middleware';
+import { routing } from './i18n/routing';
+
+const intlMiddleware = createMiddleware(routing);
+
+function stripLocale(pathname: string) {
+  const segments = pathname.split('/');
+  const locale = segments[1];
+
+  if (routing.locales.includes(locale as never)) {
+    return `/${segments.slice(2).join('/')}`.replace(/\/$/, '') || '/';
+  }
+
+  return pathname;
+}
 
 export function proxy(request: NextRequest) {
   const isAuth = request.cookies.get('auth')?.value === 'true' || false;
+  const preferredLocale = request.cookies.get('CLARO_LOCALE')?.value;
+  if (preferredLocale && routing.locales.includes(preferredLocale as never)) {
+    request.cookies.set('NEXT_LOCALE', preferredLocale);
+  }
+
   const { pathname } = request.nextUrl;
+  const pathWithoutLocale = stripLocale(pathname);
+
   if (
     !isAuth &&
-    pathname !== '/' &&
-    pathname !== '/login' &&
-    pathname !== '/callback/google' &&
-    pathname !== '/register'
+    pathWithoutLocale !== '/' &&
+    pathWithoutLocale !== '/login' &&
+    pathWithoutLocale !== '/callback/google' &&
+    pathWithoutLocale !== '/register'
   ) {
-    return NextResponse.redirect(new URL('/login', request.url));
+    const url = request.nextUrl.clone();
+    url.pathname = pathname.replace(pathWithoutLocale, '/login');
+    return NextResponse.redirect(url);
   }
 
   if (
     isAuth &&
-    (pathname === '/login' || pathname === '/register' || pathname === '/callback/google')
+    (pathWithoutLocale === '/login' ||
+      pathWithoutLocale === '/register' ||
+      pathWithoutLocale === '/callback/google')
   ) {
-    return NextResponse.redirect(new URL('/app', request.url));
+    const url = request.nextUrl.clone();
+    url.pathname = pathname.replace(pathWithoutLocale, '/app');
+    return NextResponse.redirect(url);
   }
 
-  return NextResponse.next();
+  return intlMiddleware(request);
 }
 
 export const config = {
-  matcher: ['/register', '/login', '/app', '/callback/google', '/board/:path*'],
+  matcher: ['/((?!api|trpc|_next|_vercel|.*\\..*).*)'],
 };

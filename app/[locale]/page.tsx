@@ -45,7 +45,7 @@ const jsonLd = {
 
 export default function Home() {
   return (
-    <div className="min-h-dvh bg-white text-slate-950">
+    <div className="min-h-dvh">
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}

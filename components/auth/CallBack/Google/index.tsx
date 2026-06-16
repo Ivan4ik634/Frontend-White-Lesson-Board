@@ -27,10 +27,14 @@ const CallBackGoogle: FC<Props> = (props) => {
         .maybeSingle();
 
       if (!profile) {
+        const language = Cookies.get('CLARO_LOCALE') || Cookies.get('NEXT_LOCALE') || 'en';
+
         await supabase.from('profile').insert({
           id: user.id,
           name: user.user_metadata.full_name,
+          email: user.email,
           avatar: user.user_metadata.avatar_url,
+          language,
         });
 
         console.log('Profile created');

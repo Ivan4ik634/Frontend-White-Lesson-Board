@@ -1,0 +1,26 @@
+import { uploadService } from '@/services/upload.service';
+import { UserT } from '@/types/UserT';
+import { useRef, useState } from 'react';
+
+export const useUploadImage = (profile: UserT | null) => {
+  const ref = useRef<HTMLInputElement>(null);
+  const [url, setUrl] = useState('');
+
+  const handleUploadImage = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (!profile) return;
+
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    const { data: image } = await uploadService.uploadImage(profile?.id, file);
+    if (!image) return;
+
+    const { data } = await uploadService.getPublicUrl(image.path);
+    setUrl(data.publicUrl);
+  };
+  const handleDeleteImage = async () => {
+    await uploadService.deleteImage(url);
+    setUrl('');
+  };
+  return { ref, url, setUrl, handleUploadImage, handleDeleteImage };
+};

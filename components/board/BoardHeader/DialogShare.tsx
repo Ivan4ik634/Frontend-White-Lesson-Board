@@ -15,6 +15,7 @@ import { boardService } from '@/services/board.service';
 import { BoardT } from '@/types/Board';
 import { Check, Copy, Globe2, LockKeyhole, Share2 } from 'lucide-react';
 import { useParams } from 'next/navigation';
+import { useTranslations } from 'next-intl';
 import { useState } from 'react';
 import { toast } from 'sonner';
 
@@ -23,6 +24,9 @@ const DialogShare = () => {
   const [saving, setSaving] = useState(false);
   const [access, setAccess] = useState<BoardT['access']>('private');
   const param: { id: string } = useParams();
+  const t = useTranslations('whiteboard');
+  const boards = useTranslations('boards');
+  const common = useTranslations('common');
 
   const { data: board, refetch: refetchBoard } = useSupabaseQuery<BoardT>(
     () => boardService.findOne(param.id),
@@ -39,9 +43,9 @@ const DialogShare = () => {
 
     try {
       await navigator.clipboard.writeText(url);
-      toast.success('Invite link copied');
+      toast.success(t('inviteLinkCopied'));
     } catch {
-      toast.error('Could not copy board link');
+      toast.error(t('copyFailed'));
     }
   }
 
@@ -59,18 +63,18 @@ const DialogShare = () => {
 
     await refetchBoard();
     setOpen(false);
-    toast.success(`Board is now ${access}`);
+    toast.success(t('boardIsNow', { access: access === 'public' ? boards('public') : boards('private') }));
   }
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger render={<Button variant="outline" size="sm" />}>
         <Share2 className="size-3.5" aria-hidden />
-        <span className="hidden sm:inline">Share</span>
+        <span className="hidden sm:inline">{t('share')}</span>
       </DialogTrigger>
       <DialogContent className="max-w-sm max-sm:bottom-0 max-sm:left-0 max-sm:right-0 max-sm:top-auto max-sm:max-w-none max-sm:translate-x-0 max-sm:translate-y-0 max-sm:rounded-b-none">
         <DialogHeader>
-          <DialogTitle>Board access</DialogTitle>
-          <DialogDescription>Choose who can open this board by link.</DialogDescription>
+          <DialogTitle>{t('boardAccess')}</DialogTitle>
+          <DialogDescription>{t('accessDescription')}</DialogDescription>
         </DialogHeader>
 
         <div className="grid gap-2">
@@ -87,11 +91,11 @@ const DialogShare = () => {
                 onClick={() => setAccess(value)}>
                 <Icon className="size-4" aria-hidden />
                 <span className="min-w-0 flex-1">
-                  <span className="block text-sm font-medium capitalize">{value}</span>
+                  <span className="block text-sm font-medium">
+                    {value === 'public' ? boards('public') : boards('private')}
+                  </span>
                   <span className="block text-xs font-normal text-muted-foreground">
-                    {value === 'public'
-                      ? 'Anyone with the link can open it.'
-                      : 'Only invited users can open it.'}
+                    {value === 'public' ? t('publicDescription') : t('privateDescription')}
                   </span>
                 </span>
                 {selected && <Check className="size-4 text-primary" aria-hidden />}
@@ -100,15 +104,15 @@ const DialogShare = () => {
           })}
         </div>
 
-        <p className="opacity-50">Note: Max users: 4</p>
+        <p className="opacity-50">{t('maxUsers')}</p>
 
         <DialogFooter className="max-sm:[&_[data-slot=button]]:h-10">
           <Button type="button" variant="outline" onClick={copyBoardLink}>
             <Copy className="size-4" aria-hidden />
-            Copy link
+            {t('copyLink')}
           </Button>
           <Button type="button" disabled={saving || !board} onClick={updateAccess}>
-            {saving ? 'Saving...' : 'Submit'}
+            {saving ? t('saving') : common('submit')}
           </Button>
         </DialogFooter>
       </DialogContent>

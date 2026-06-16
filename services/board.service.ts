@@ -1,4 +1,5 @@
 import { supabase } from '@/lib/supabase';
+import { BoardCreate } from '@/types/Board';
 
 export const boardService = {
   findAll() {
@@ -9,8 +10,8 @@ export const boardService = {
     return supabase.from('board').select('*').eq('id', boardId).single();
   },
 
-  create(userId: string) {
-    return supabase.from('board').insert({ user_id: userId }).single();
+  create(data: BoardCreate) {
+    return supabase.from('board').insert(data).select().single();
   },
 
   update(id: string, update: { access: 'public' | 'private' }) {

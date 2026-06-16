@@ -1,4 +1,5 @@
 export const colors = [
+  { name: 'white', value: '#ffffff' },
   { name: 'black', value: '#111827' },
   { name: 'red', value: '#ef4444' },
   { name: 'green', value: '#22c55e' },

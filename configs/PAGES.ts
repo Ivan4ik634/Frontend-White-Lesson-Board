@@ -4,6 +4,7 @@ class Pages {
   PROFILE = '/profile';
   HOME = '/app';
   LENDING = '/';
+  SETTINGS = '/settings';
   BOARDS = '/boards';
   BOARD(boardId: string) {
     return `/board/${boardId}`;
@@ -11,6 +12,5 @@ class Pages {
   INVITE_IN_BOARD(boardId: string) {
     return `/board/${boardId}/invite`;
   }
-  SETTINGS = '/settings';
 }
 export const PAGES = new Pages();

@@ -16,7 +16,7 @@ const CanvasCursors: FC<Props> = ({ profile, zoom }) => {
   const { users: cursors } = useUsersInBoard();
   const { onlineUsers } = useOnlineUsers();
   return cursors.map((cursor, i) => {
-    const color = colors.slice(1)[i % colors.length];
+    const color = colors.slice(2)[i % colors.length];
     if (profile?.id === cursor.user_id.id || !onlineUsers.includes(cursor.user_id.id)) return null;
     return (
       <div

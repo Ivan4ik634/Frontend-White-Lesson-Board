@@ -1,7 +1,11 @@
 import { Button } from '@/components/ui/button';
 import { PAGES } from '@/configs/PAGES';
+import { Link } from '@/i18n/navigation';
 import { ArrowRight, CirclePlay, UsersRound } from 'lucide-react';
-import Link from 'next/link';
+import { useTranslations } from 'next-intl';
+import { Badge } from '../ui/badge';
+import Description from '../ui/description';
+import Title from '../ui/title';
 import { LandingCanvasPreview } from './landing-canvas-preview';
 
 const stats = [
@@ -11,44 +15,46 @@ const stats = [
 ];
 
 export function LandingHero() {
+  const t = useTranslations('landing');
   return (
-    <section className="relative overflow-hidden bg-slate-50 px-4 pb-20 pt-20 sm:px-6 sm:pb-24 sm:pt-24 lg:px-8">
+    <section className="relative overflow-hidden  px-4 pb-20 pt-20 sm:px-6 sm:pb-24 sm:pt-24 lg:px-8">
       <div className="relative mx-auto max-w-7xl">
         <div className="mx-auto max-w-4xl text-center">
-          <div className="mx-auto inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-4 py-2 text-sm font-medium text-slate-700 shadow-sm">
-            <UsersRound className="size-4 text-slate-700" aria-hidden />
-            Built for work, study, friends, and every shared plan
-          </div>
+          <Badge
+            variant="outline"
+            className="px-3 text-sm font-medium py-4 text-slate-950 dark:text-slate-50">
+            <UsersRound />
+            {t('badge')}
+          </Badge>
 
-          <h1 className="mt-7  text-5xl font-semibold tracking-normal text-slate-950 sm:text-6xl lg:text-7xl">
-            A shared whiteboard for teamwork.
-          </h1>
-          <p className="mx-auto mt-6 max-w-2xl text-pretty text-lg leading-8 text-slate-600 sm:text-xl">
-            Claro helps teams, study groups, friends, and creators explain ideas, draw diagrams,
-            split tasks, and keep the whole group moving together.
-          </p>
+          <Title className="mt-7  text-5xl font-semibold tracking-normal sm:text-6xl lg:text-7xl">
+            {t('headline')}
+          </Title>
+          <Description className="mx-auto mt-6 max-w-2xl text-pretty text-lg leading-8  sm:text-xl">
+            {t('description')}
+          </Description>
 
           <div className="mt-9 flex flex-col items-center justify-center gap-3 sm:flex-row">
             <Button
               asChild
-              className="h-12 gap-2 rounded-lg  w-full sm:w-auto bg-slate-950 px-6 text-base font-medium text-white shadow-sm transition hover:-translate-y-0.5 hover:bg-slate-800">
+              className="h-12 gap-2 rounded-lg  w-full sm:w-auto  px-6 text-base font-medium  shadow-sm transition hover:-translate-y-0.5 ">
               <Link href={PAGES.REGISTER}>
-                Start Teamwork
+                {t('start')}
                 <ArrowRight className="size-4" aria-hidden />
               </Link>
             </Button>
             <Button
               asChild
               variant="outline"
-              className="h-12 gap-2 rounded-lg w-full  sm:w-auto border-slate-200 bg-white px-6 text-base font-medium text-slate-950 shadow-sm transition hover:-translate-y-0.5 hover:bg-slate-50">
+              className="h-12 gap-2 rounded-lg w-full  sm:w-auto px-6 text-base font-medium shadow-sm transition hover:-translate-y-0.5 ">
               <Link href="#about">
                 <CirclePlay className="size-4" aria-hidden />
-                Learn More
+                {t('learnMore')}
               </Link>
             </Button>
           </div>
 
-          <div className="mx-auto mt-10 grid max-w-3xl gap-3 sm:grid-cols-3">
+          {/* <div className="mx-auto mt-10 grid max-w-3xl gap-3 sm:grid-cols-3">
             {stats.map((stat) => (
               <div
                 key={stat.value}
@@ -57,7 +63,7 @@ export function LandingHero() {
                 <p className="mt-1 text-sm leading-5 text-slate-600">{stat.label}</p>
               </div>
             ))}
-          </div>
+          </div> */}
         </div>
 
         <LandingCanvasPreview />

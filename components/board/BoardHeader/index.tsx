@@ -9,7 +9,8 @@ import { cn } from '@/lib/utils';
 import { useOnlineUsers } from '@/store/onlineUsers';
 import { useUsersInBoard } from '@/store/useUsersInBoard';
 import { ChevronLeft, LogOut } from 'lucide-react';
-import Link from 'next/link';
+import { Link } from '@/i18n/navigation';
+import { useTranslations } from 'next-intl';
 import { FC } from 'react';
 import DialogAdmin from './DialogAdmin';
 import DialogShare from './DialogShare';
@@ -21,6 +22,7 @@ interface Props {
 const BoardHeader: FC<Props> = ({ boardId }) => {
   const { users } = useUsersInBoard();
   const { onlineUsers } = useOnlineUsers();
+  const t = useTranslations('whiteboard');
 
   const { isOwner, currentUserId, adminUsers, leaving, kickUser, leaveBoard, kickingUserId } =
     useBoardAccess({ boardId });
@@ -34,7 +36,7 @@ const BoardHeader: FC<Props> = ({ boardId }) => {
             buttonVariants({ variant: 'ghost', size: 'icon-sm' }),
             'shrink-0 text-muted-foreground hover:text-foreground',
           )}
-          aria-label="Back to home">
+          aria-label={t('backHome')}>
           <ChevronLeft className="size-4" />
         </Link>
         <span className="text-muted-foreground truncate font-mono text-xs" title={boardId}>
@@ -56,7 +58,7 @@ const BoardHeader: FC<Props> = ({ boardId }) => {
           size="icon-sm"
           disabled={leaving || !currentUserId}
           onClick={leaveBoard}
-          aria-label="Leave board">
+          aria-label={t('leaveBoard')}>
           <LogOut className="size-4" aria-hidden />
         </Button>
         <AvatarGroup className="flex max-w-24 items-center overflow-hidden pl-2 sm:max-w-none">
