@@ -53,19 +53,21 @@ const CanvasElements: FC<Props> = ({
         </div>
       );
     }
+    if (el.type === 'pen')
+      return (
+        <svg
+          key={el.id}
+          className={`${elementsIdsRemove?.includes(el.id) ? 'opacity-50' : ''} z-10  no-select absolute  overflow-visible pointer-events-none`}>
+          <polyline
+            points={el.points.map((p) => `${p.x},${p.y}`).join(' ')}
+            fill="none"
+            stroke={`${selectedElementIds.includes(el.id) ? 'blue' : el.color}`}
+            strokeWidth={3}
+          />
+        </svg>
+      );
 
-    return el.type === 'pen' ? (
-      <svg
-        key={el.id}
-        className={`${elementsIdsRemove?.includes(el.id) ? 'opacity-50' : ''} z-10  no-select absolute  overflow-visible pointer-events-none`}>
-        <polyline
-          points={el.points.map((p) => `${p.x},${p.y}`).join(' ')}
-          fill="none"
-          stroke={`${selectedElementIds.includes(el.id) ? 'blue' : el.color}`}
-          strokeWidth={3}
-        />
-      </svg>
-    ) : (
+    return (
       <div key={el.id}>
         {selectedElementIds.includes(el.id) && (
           <div
@@ -76,6 +78,8 @@ const CanvasElements: FC<Props> = ({
               height: el.height,
               top: el.y,
             }}
+            draggable={false}
+            onDragStart={(e) => e.preventDefault()}
             className={`z-10 ${elementsIdsRemove.includes(el.id) ? 'opacity-50' : ''}  border-[1px] border-blue-500`}>
             <div className="relative w-full h-full">
               <div
@@ -97,20 +101,41 @@ const CanvasElements: FC<Props> = ({
             </div>
           </div>
         )}
-        <label
-          key={el.id}
-          style={{
-            position: 'absolute',
-            left: el.x,
-            borderColor: el.color,
-            width: el.width,
-            height: el.height,
-            top: el.y,
-          }}
-          className={`${elementsIdsRemove.includes(el.id) ? 'opacity-50' : ''} border-2 ${selectedElementMove === el.id ? 'cursor-move' : ''} no-select   ${
-            el.type === 'rectangle' ? 'rounded-[5px]' : 'rounded-full'
-          } `}
-        />
+        {el.type === 'image' ? (
+          <div
+            style={{
+              position: 'absolute',
+              left: el.x,
+              width: el.width,
+              height: el.height,
+              top: el.y,
+            }}
+            draggable={false}
+            onDragStart={(e) => e.preventDefault()}>
+            <img
+              src={el.file}
+              alt="Element"
+              draggable={false}
+              onDragStart={(e) => e.preventDefault()}
+              style={{ userSelect: 'none', pointerEvents: 'none' }}
+              className={`${selectedElementIds.includes(el.id) ? 'z-20' : 'z-10'} ${elementsIdsRemove.includes(el.id) ? 'opacity-50' : ''} w-full h-full ${selectedElementMove === el.id ? 'cursor-move' : ''} no-select rounded-[5px]`}
+            />
+          </div>
+        ) : (
+          <label
+            style={{
+              position: 'absolute',
+              left: el.x,
+              borderColor: el.color,
+              width: el.width,
+              height: el.height,
+              top: el.y,
+            }}
+            className={`${selectedElementIds.includes(el.id) ? 'z-20' : ''} ${elementsIdsRemove.includes(el.id) ? 'opacity-50' : ''} border-2 ${selectedElementMove === el.id ? 'cursor-move' : ''} no-select   ${
+              el.type === 'rectangle' ? 'rounded-[5px]' : 'rounded-full'
+            } `}
+          />
+        )}
       </div>
     );
   });

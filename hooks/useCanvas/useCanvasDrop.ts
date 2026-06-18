@@ -50,6 +50,7 @@ export const useCanvasDrop = ({
       y,
       elements,
     });
+    console.log('hit', hit);
 
     if (!hit) {
       setSelectedElementIds([]);

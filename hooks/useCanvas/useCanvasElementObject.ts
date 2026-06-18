@@ -22,6 +22,7 @@ export const useCanvasElementObject = ({
   const startPointRef = useRef({ x: 0, y: 0 });
   const objectIdRef = useRef<string>('');
   const isDrawingRef = useRef(false);
+
   const handleElementStart = async (
     e: PointerEvent<HTMLDivElement>,
     type: 'rectangle' | 'circle',

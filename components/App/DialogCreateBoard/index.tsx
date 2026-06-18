@@ -133,7 +133,7 @@ const DialogCreateBoard: FC<Props> = ({ children }) => {
           </div>
           <DialogFooter>
             <DialogClose render={<Button variant="outline" type="button" size={'lg'} />}>
-                {common('cancel')}
+              {common('cancel')}
             </DialogClose>
             <Button type="submit" size={'lg'} className="w-full sm:w-auto">
               {common('submit')}

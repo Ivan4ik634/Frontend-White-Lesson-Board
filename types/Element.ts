@@ -3,7 +3,7 @@ import { BoardUserT } from './Board';
 export type ElementT =
   | {
       id: string;
-      type: 'rectangle' | 'circle';
+      type: 'rectangle' | 'circle' | 'image';
 
       x: number;
       y: number;
@@ -12,6 +12,8 @@ export type ElementT =
 
       width: number;
       height: number;
+
+      file?: string;
     }
   | {
       id: string;
@@ -36,6 +38,7 @@ export type ElementT =
         y: number;
       }[];
     };
+
 export type EventsCanvas = {
   handleCreateElement: (element: ElementT) => void;
   handleUpdateElement: (element: ElementT) => void;

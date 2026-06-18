@@ -176,6 +176,7 @@ export function Canvas({
     radial-gradient(circle, rgba(120, 120, 120, 0.6) 1px, transparent 1px)
   `,
       }}
+      className="relative h-full w-full touch-none overflow-hidden rounded-lg border border-border bg-background shadow-sm sm:rounded-xl"
       onWheel={handleZoom}
       onPointerDown={(e) => {
         e.stopPropagation();
@@ -190,9 +191,19 @@ export function Canvas({
       onPointerUp={handleCanvasTriggerEnd}
       onPointerCancel={handleCanvasTriggerEnd}
       onTouchMove={handleTouchMove}
-      onTouchEnd={handleTouchEnd}
-      className="relative h-full w-full touch-none overflow-hidden rounded-lg border border-border bg-background shadow-sm sm:rounded-xl">
-      <BoardToolRail color={color} setColor={setColor} activeTool={tool} onToolChange={setTool} />
+      onTouchEnd={handleTouchEnd}>
+      <BoardToolRail
+        setElements={setElements}
+        profile={profile}
+        camera={camera}
+        events={events}
+        color={color}
+        setColor={setColor}
+        activeTool={tool}
+        onToolChange={setTool}
+        ref={ref}
+        zoom={zoom}
+      />
       <CanvasPickColors color={color} setColor={setColor} />
       <CanvasZoom addZoom={addZoom} zoom={zoom} />
       <div

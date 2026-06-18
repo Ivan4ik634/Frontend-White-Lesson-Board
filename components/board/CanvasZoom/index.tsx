@@ -20,7 +20,7 @@ const CanvasZoom: FC<Props> = ({ zoom, addZoom }) => {
         onClick={() => (zoom > 0.3 ? addZoom(-0.1) : '')}
         size={18}
       />
-      <p>{Number(zoom * 100).toFixed(0)}%</p>
+      <p className="no-select">{Number(zoom * 100).toFixed(0)}%</p>
       <Plus
         className={`cursor-pointer hover:opacity-100 opacity-75 transition-all duration-300 ${zoom < 1.5 ? 'hover:opacity-50 opacity-50' : ''}`}
         onClick={() => (zoom < 1.5 ? addZoom(0.1) : '')}

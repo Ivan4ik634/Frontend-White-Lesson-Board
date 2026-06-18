@@ -1,13 +1,14 @@
 import { uploadService } from '@/services/upload.service';
 import { UserT } from '@/types/UserT';
 import { useRef, useState } from 'react';
+import { toast } from 'sonner';
 
 export const useUploadImage = (profile: UserT | null) => {
   const ref = useRef<HTMLInputElement>(null);
   const [url, setUrl] = useState('');
 
   const handleUploadImage = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (!profile) return;
+    if (!profile) return toast.error('User profile is not available');
 
     const file = e.target.files?.[0];
     if (!file) return;

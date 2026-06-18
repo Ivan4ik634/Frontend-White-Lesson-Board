@@ -15,6 +15,24 @@ export const getWorld = ({ e, zoom, canvasRef }: GetWorldProps): { x: number; y:
 
   return { x, y };
 };
+export const getCanvasCenter = ({
+  zoom,
+  camera,
+  canvasRef,
+}: {
+  zoom: number;
+  camera: { x: number; y: number };
+  canvasRef: RefObject<HTMLDivElement | null>;
+}) => {
+  if (!canvasRef.current) return { x: 0, y: 0 };
+
+  const rect = canvasRef.current.getBoundingClientRect();
+
+  return {
+    x: (rect.width / 2 - camera.x) / zoom,
+    y: (rect.height / 2 - camera.y) / zoom,
+  };
+};
 interface findHitElementProps {
   x: number;
   y: number;
