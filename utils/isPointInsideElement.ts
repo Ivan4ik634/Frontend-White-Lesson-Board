@@ -3,6 +3,7 @@ import { ElementT } from '@/types/Element';
 export function isPointInsideElement({ x, y, el }: { x: number; y: number; el: ElementT }) {
   switch (el.type) {
     case 'rectangle':
+    case 'image':
       return x >= el.x && x <= el.x + el.width && y >= el.y && y <= el.y + el.height;
 
     case 'circle': {
@@ -14,7 +15,6 @@ export function isPointInsideElement({ x, y, el }: { x: number; y: number; el: E
     }
 
     case 'text':
-      // временно хотя бы по точке текста
       return Math.max(el.text.length * 10, 20) && Math.abs(y - el.y) < 10;
 
     case 'pen':

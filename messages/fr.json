@@ -18,6 +18,9 @@
     "home": "Accueil",
     "settings": "Paramètres"
   },
+  "hooks":{
+    "User_profile_is_not_available": "Le profil utilisateur n'est pas disponible"
+  },
   "boards": {
     "title": "Tableaux",
     "create": "Créer un tableau",

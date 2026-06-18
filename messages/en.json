@@ -18,6 +18,9 @@
     "home": "Home",
     "settings": "Settings"
   },
+  "hooks":{
+    "User_profile_is_not_available": "User profile is not available"
+  },
   "boards": {
     "title": "Boards",
     "create": "Create board",

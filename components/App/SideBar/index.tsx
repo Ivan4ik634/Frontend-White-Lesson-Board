@@ -53,7 +53,7 @@ const SideBar: FC<Props> = (props) => {
         </div>
         <div className="min-h-0 flex-1">
           <p className="opacity-50 mb-3 text-sm">{t('boards')}</p>
-          <ScrollArea className="h-full">
+          <ScrollArea className="h-[540px]">
             <div className="flex flex-col gap-y-3">
               {loading ? (
                 <div>{common('loading')}</div>

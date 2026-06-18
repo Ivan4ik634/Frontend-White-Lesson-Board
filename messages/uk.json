@@ -18,6 +18,9 @@
     "home": "Головна",
     "settings": "Налаштування"
   },
+  "hooks":{
+    "User_profile_is_not_available": "Профіль користувача недоступний"
+  },
   "boards": {
     "title": "Дошки",
     "create": "Створити дошку",

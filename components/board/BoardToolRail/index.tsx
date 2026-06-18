@@ -69,7 +69,6 @@ export function BoardToolRail({
   useEffect(() => {
     const createImageElement = async () => {
       if (url) {
-        console.log(canvasRef.current?.getBoundingClientRect());
         const center = getCanvasCenter({ zoom, camera, canvasRef });
 
         console.log({
