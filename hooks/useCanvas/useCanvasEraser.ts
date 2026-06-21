@@ -1,8 +1,9 @@
 import { BoardTool } from '@/components/board/BoardToolRail';
+import { useHistoryStore } from '@/store/useHistoryStore';
 import { ElementT, EventsCanvas } from '@/types/Element';
 import { getWorld } from '@/utils/canvas';
 import { isPointInsideElement } from '@/utils/isPointInsideElement';
-import { PointerEvent, RefObject, useEffect, useRef, useState } from 'react';
+import { PointerEvent, RefObject, useRef, useState } from 'react';
 
 interface Props {
   zoom: number;
@@ -23,6 +24,8 @@ export const useCanvasEraser = ({
   const [isErasing, setIsErasing] = useState(false);
   const [elementsIdsRemove, setElementsIdsRemove] = useState<string[]>([]);
   const lastPointRef = useRef({ x: 0, y: 0 });
+  const { setHistory } = useHistoryStore();
+
   const handleEraserStart = (e: PointerEvent<HTMLDivElement>) => {
     if (tool !== 'eraser') return;
     setIsErasing(true);
@@ -54,15 +57,14 @@ export const useCanvasEraser = ({
 
     setElementsIdsRemove((prev) => [...new Set([...prev, ...newIds])]);
   };
-  useEffect(() => {
-    console.log(elementsIdsRemove);
-  }, [elementsIdsRemove]);
   const handleEraserEnd = async () => {
     setIsErasing(false);
-    for (const id of elementsIdsRemove) {
-      setElements((prev) => prev.filter((el) => el.id !== id));
-      await events.handleDeleteElement(id);
-    }
+    setElements((prev) => {
+      const next = prev.filter((el) => !elementsIdsRemove.includes(el.id));
+      setHistory(next);
+      return next;
+    });
+    await events.handleDeleteElements(elementsIdsRemove);
     setElementsIdsRemove([]);
   };
   return {

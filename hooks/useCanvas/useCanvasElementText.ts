@@ -1,4 +1,5 @@
 import { BoardTool } from '@/components/board/BoardToolRail';
+import { useHistoryStore } from '@/store/useHistoryStore';
 import { ElementT, EventsCanvas } from '@/types/Element';
 import { getWorld } from '@/utils/canvas';
 import { PointerEvent, RefObject, useRef, useState } from 'react';
@@ -17,6 +18,7 @@ export const useCanvasElementText = ({
   tool,
   setElements,
   color,
+
   elements,
   canvasRef,
   events,
@@ -24,6 +26,8 @@ export const useCanvasElementText = ({
   const [editingId, setEditingId] = useState<string | null>(null);
   const [draft, setDraft] = useState('');
   const inputRef = useRef<HTMLTextAreaElement>(null);
+  const { setHistory } = useHistoryStore();
+
   const handleTextStart = async (e: PointerEvent<HTMLDivElement>) => {
     if (tool !== 'text') return;
     const { x, y } = getWorld({ e, zoom, canvasRef });
@@ -36,10 +40,16 @@ export const useCanvasElementText = ({
       x,
       y,
       color,
+      width: 120,
+      height: 32,
+      fontSize: 16,
       text: '',
     };
 
-    setElements((prev) => [...prev, element]);
+    setElements((prev) => {
+      const next = [...prev, element];
+      return next;
+    });
 
     setEditingId(id);
     setDraft('');
@@ -63,20 +73,37 @@ export const useCanvasElementText = ({
     }, 0);
   };
 
+  const finishingRef = useRef(false);
+
   const finishEditing = async () => {
+    if (finishingRef.current) return;
+    finishingRef.current = true;
+
     const current = elements.find((el) => el.id === editingId);
+    if (!current || current.type !== 'text') {
+      finishingRef.current = false;
+      return;
+    }
 
-    if (!current || current.type !== 'text') return;
+    const value = draft;
 
-    setElements((prev) => prev.map((el) => (el.id === editingId ? { ...el, text: draft } : el)));
+    const next = elements.map((el) => (el.id === editingId ? { ...el, text: value } : el));
+
+    setElements(next);
+
+    setHistory(next);
 
     setEditingId(null);
     setDraft('');
 
-    await events.handleUpdateElement({
-      ...current,
-      text: draft,
-    });
+    try {
+      await events.handleUpdateElement({
+        ...current,
+        text: value,
+      });
+    } finally {
+      finishingRef.current = false;
+    }
   };
 
   const getEditingElement = () => elements.find((e) => e.id === editingId);

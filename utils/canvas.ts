@@ -33,6 +33,31 @@ export const getCanvasCenter = ({
     y: (rect.height / 2 - camera.y) / zoom,
   };
 };
+
+export const getFontSize = (text: string, targetWidth: number) => {
+  let min = 1;
+  let max = 500;
+
+  const canvas = document.createElement('canvas');
+  const ctx = canvas.getContext('2d');
+
+  while (min < max) {
+    const mid = Math.floor((min + max + 1) / 2);
+
+    ctx!.font = `${mid}px sans-serif`;
+
+    const width = ctx!.measureText(text).width;
+
+    if (width <= targetWidth) {
+      min = mid;
+    } else {
+      max = mid - 1;
+    }
+  }
+
+  return min;
+};
+
 interface findHitElementProps {
   x: number;
   y: number;
@@ -40,13 +65,6 @@ interface findHitElementProps {
 }
 export const findHitElement = ({ x, y, elements }: findHitElementProps) => {
   return elements.find((el) => {
-    if (el.type === 'text')
-      return (
-        x >= el.x &&
-        x <= el.x + Math.max(el.text.length * 10, 20) &&
-        y >= el.y &&
-        y <= el.y + (el.text?.split('\n').length || 1) * 24
-      );
     if (el.type === 'pen') {
       return el.points.some((p) => {
         return Math.abs(x - p.x) < 20 && Math.abs(y - p.y) < 20;

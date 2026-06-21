@@ -28,6 +28,31 @@ export const objectService = {
       })
       .eq('objectId', objectId);
   },
+  createMany(boardId: string, userId: string, objects: ElementT[]) {
+    return supabase.from('object').insert(
+      objects.map((object) => ({
+        board_id: boardId,
+        last_change_user: userId,
+        objectId: object.id,
+        user_id: userId,
+        object,
+      })),
+    );
+  },
+  replaceBoard(boardId: string, userId: string, elements: ElementT[]) {
+    return supabase.from('object').upsert(
+      elements.map((el) => ({
+        board_id: boardId,
+        last_change_user: userId,
+        objectId: el.id,
+        object: el,
+      })),
+    );
+  },
+
+  deleteMany(objectIds: string[]) {
+    return supabase.from('object').delete().in('objectId', objectIds);
+  },
 
   delete(objectId: string) {
     return supabase.from('object').delete().eq('objectId', objectId);

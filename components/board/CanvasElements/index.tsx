@@ -10,6 +10,9 @@ interface Props {
   selectedElementIds: string[];
   selectedElementMove: string;
   elementsIdsRemove: string[];
+  handleUpdateObjectDown: (e: PointerEvent<HTMLDivElement>, id: string) => void;
+  handleUpdateObjectMove: (e: PointerEvent<HTMLDivElement>, id: string) => void;
+  handleUpdateObjectUp: (e: PointerEvent<HTMLDivElement>, id: string) => void;
   handleResizeStart: (
     e: PointerEvent<HTMLDivElement>,
     corner: 'top-left' | 'top-right' | 'bottom-left' | 'bottom-right',
@@ -25,34 +28,15 @@ const CanvasElements: FC<Props> = ({
   elementsIdsRemove,
   startEditing,
   handleResizeStart,
+  handleUpdateObjectDown,
+  handleUpdateObjectMove,
+  handleUpdateObjectUp,
 }) => {
   return elements.map((el) => {
-    if (el.type === 'text') {
-      const isEditing = editingId === el.id;
-
-      return (
-        <div
-          key={el.id}
-          onPointerDown={(e) => {
-            !selectedElementIds.includes(el.id) && e.stopPropagation();
-          }}
-          onDoubleClick={(e) => {
-            e.stopPropagation();
-            startEditing(el.id);
-          }}
-          className={`absolute z-10 ${elementsIdsRemove.includes(el.id) ? 'opacity-50' : ''} no-select whitespace-pre ${selectedElementIds.includes(el.id) ? 'border-2 border-blue-500' : ''}`}
-          style={{
-            left: el.x,
-
-            color: el.color,
-
-            top: el.y,
-            visibility: isEditing ? 'hidden' : 'visible',
-          }}>
-          {el.text}
-        </div>
-      );
-    }
+    console.log(
+      'STATE AFTER UPDATE',
+      elements.find((e) => e.id === el?.id),
+    );
     if (el.type === 'pen')
       return (
         <svg
@@ -77,6 +61,7 @@ const CanvasElements: FC<Props> = ({
               width: el.width,
               height: el.height,
               top: el.y,
+              visibility: el.type === 'text' && editingId === el.id ? 'hidden' : 'visible',
             }}
             draggable={false}
             onDragStart={(e) => e.preventDefault()}
@@ -84,24 +69,58 @@ const CanvasElements: FC<Props> = ({
             <div className="relative w-full h-full">
               <div
                 onPointerDown={(e) => handleResizeStart(e, 'top-left', el.id)}
-                className="absolute -left-1.5 -top-1.5 z-100 size-3 touch-none cursor-nwse-resize rounded-[1px] border border-blue-500 bg-white sm:-left-0.5 sm:-top-0.5 sm:size-2"
+                className="absolute -left-2 -top-2 z-100 size-3 touch-none cursor-nwse-resize rounded-[1px] border border-blue-500 bg-white sm:-left-1.5 sm:-top-1.5 sm:size-2"
               />
               <div
                 onPointerDown={(e) => handleResizeStart(e, 'top-right', el.id)}
-                className="absolute -right-1.5 -top-1.5 z-100 size-3 touch-none cursor-sw-resize rounded-[1px] border border-blue-500 bg-white sm:-right-0.5 sm:-top-0.5 sm:size-2"
+                className="absolute -right-2 -top-2 z-100 size-3 touch-none cursor-sw-resize rounded-[1px] border border-blue-500 bg-white sm:-right-1.5 sm:-top-1.5 sm:size-2"
               />
               <div
                 onPointerDown={(e) => handleResizeStart(e, 'bottom-left', el.id)}
-                className="absolute -bottom-1.5 -left-1.5 z-100 size-3 touch-none cursor-sw-resize rounded-[1px] border border-blue-500 bg-white sm:-bottom-0.5 sm:-left-0.5 sm:size-2"
+                className="absolute -bottom-2 -left-2 z-100 size-3 touch-none cursor-sw-resize rounded-[1px] border border-blue-500 bg-white sm:-bottom-1.5 sm:-left-1.5 sm:size-2"
               />
               <div
                 onPointerDown={(e) => handleResizeStart(e, 'bottom-right', el.id)}
-                className="absolute -bottom-1.5 -right-1.5 z-100 size-3 touch-none cursor-nwse-resize rounded-[1px] border border-blue-500 bg-white sm:-bottom-0.5 sm:-right-0.5 sm:size-2"
+                className="absolute -bottom-2 -right-2 z-100 size-3 touch-none cursor-nwse-resize rounded-[1px] border border-blue-500 bg-white sm:-bottom-1.5 sm:-right-1.5 sm:size-2"
               />
             </div>
           </div>
         )}
-        {el.type === 'image' ? (
+        {el.type === 'text' ? (
+          <div
+            key={el.id}
+            onPointerDown={(e) => {
+              e.stopPropagation();
+              handleUpdateObjectDown(e, el.id);
+            }}
+            onPointerMove={(e) => {
+              e.stopPropagation();
+              handleUpdateObjectMove(e, el.id);
+            }}
+            onPointerUp={(e) => {
+              e.stopPropagation();
+              handleUpdateObjectUp(e, el.id);
+            }}
+            onDoubleClick={(e) => {
+              e.stopPropagation();
+              startEditing(el.id);
+            }}
+            className={`absolute z-10  ${elementsIdsRemove.includes(el.id) ? 'opacity-50' : ''} break-words no-select  `}
+            style={{
+              left: el.x,
+              color: el.color,
+              overflow: 'hidden',
+
+              width: el.width,
+              height: el.height,
+              fontSize: el.fontSize,
+
+              top: el.y,
+              visibility: editingId === el.id ? 'hidden' : 'visible',
+            }}>
+            {el.text}
+          </div>
+        ) : el.type === 'image' ? (
           <div
             style={{
               position: 'absolute',

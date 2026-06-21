@@ -2,10 +2,10 @@
 
 import { useBoardCursors } from '@/hooks/useBoardCursors';
 import { useCanvasCamera } from '@/hooks/useCanvas/useCanvasCamera';
-import { useCanvasCopied } from '@/hooks/useCanvas/useCanvasCopied';
 import { useCanvasDrop } from '@/hooks/useCanvas/useCanvasDrop';
 import { useCanvasElement } from '@/hooks/useCanvas/useCanvasElement';
 import { useCanvasEraser } from '@/hooks/useCanvas/useCanvasEraser';
+import { useCanvasHotKeys } from '@/hooks/useCanvas/useCanvasHotKeys';
 import { useCanvasPen } from '@/hooks/useCanvas/useCanvasPen';
 import { useCanvasResize } from '@/hooks/useCanvas/useCanvasResize';
 import { useCanvasSelection } from '@/hooks/useCanvas/useCanvasSelection';
@@ -13,6 +13,7 @@ import { useCanvasTrigger } from '@/hooks/useCanvas/useCanvasTrigger';
 import { ElementT, EventsCanvas } from '@/types/Element';
 import { UserT } from '@/types/UserT';
 import { useRef, useState } from 'react';
+import BoardTextEditor from './BoardTextEditor';
 import { BoardTool, BoardToolRail } from './BoardToolRail';
 import CanvasCursors from './CanvasCursors';
 import CanvasElements from './CanvasElements';
@@ -114,7 +115,7 @@ export function Canvas({
     setElements,
     canvasRef,
   });
-  useCanvasCopied({ elements, events, setElements, setSelectedElementIds, selectedElementIds });
+  useCanvasHotKeys({ elements, events, setElements, setSelectedElementIds, selectedElementIds });
 
   const {
     handleUpdateObjectDown,
@@ -164,8 +165,6 @@ export function Canvas({
       handleResizeMove,
       handleResizeEnd,
     });
-  const editingEl = getEditingElement();
-
   return (
     <div
       ref={ref}
@@ -205,7 +204,7 @@ export function Canvas({
         zoom={zoom}
       />
       <CanvasPickColors color={color} setColor={setColor} />
-      <CanvasZoom addZoom={addZoom} zoom={zoom} />
+      <CanvasZoom setElements={setElements} events={events} addZoom={addZoom} zoom={zoom} />
       <div
         ref={canvasRef}
         style={{
@@ -223,44 +222,21 @@ export function Canvas({
           elementsIdsRemove={elementsIdsRemove}
           editingId={editingId}
           startEditing={startEditing}
+          handleUpdateObjectDown={handleUpdateObjectDown}
+          handleUpdateObjectMove={handleUpdateObjectMove}
+          handleUpdateObjectUp={handleUpdateObjectUp}
         />
         <CanvasSelection isSelectionRef={isSelectionRef} selection={selection} />
         <CanvasCursors profile={profile} zoom={zoom} />
 
         {editingId && (
-          <textarea
-            ref={inputRef}
-            value={draft}
-            onChange={async (e) => {
-              setDraft(e.target.value);
-              if (editingEl && editingEl?.type === 'text')
-                await events.handleUpdateElement({ ...editingEl!, text: e.target.value });
-            }}
-            onBlur={finishEditing}
-            onKeyDown={(e) => {
-              if (e.key === 'Enter' && !e.shiftKey) {
-                e.preventDefault();
-                finishEditing();
-              }
-            }}
-            className="absolute bg-transparent outline-none resize-none border-none p-0 m-0 overflow-hidden"
-            style={{
-              position: 'absolute',
-              whiteSpace: 'nowrap',
-              color: editingEl?.color,
-
-              left: editingEl?.type === 'text' ? editingEl?.x : 0,
-              top: editingEl?.type === 'text' ? editingEl?.y : 0,
-              width: `${Math.max(draft.length * 15, 20)}px`,
-              minHeight: 50,
-
-              transformOrigin: 'top left',
-
-              background: 'transparent',
-              border: 'none',
-              outline: 'none',
-              resize: 'none',
-            }}
+          <BoardTextEditor
+            inputRef={inputRef}
+            draft={draft}
+            setDraft={setDraft}
+            finishEditing={finishEditing}
+            getEditingElement={getEditingElement}
+            events={events}
           />
         )}
       </div>

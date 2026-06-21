@@ -5,10 +5,12 @@ import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover
 import { colors } from '@/configs/colors';
 import { useUploadImage } from '@/hooks/useUploadImage';
 import { cn } from '@/lib/utils';
+import { useOpenAiChat } from '@/store/useOpenAiChat';
 import { ElementT, EventsCanvas } from '@/types/Element';
 import { UserT } from '@/types/UserT';
 import { getCanvasCenter } from '@/utils/canvas';
 import { Circle, Eraser, Hand, Image, MousePointer2, Pen, Square, Type } from 'lucide-react';
+import { usePathname } from 'next/navigation';
 import { useEffect } from 'react';
 import { IoIosColorFilter } from 'react-icons/io';
 
@@ -65,18 +67,15 @@ export function BoardToolRail({
   onToolChange,
   events,
 }: BoardToolRailProps) {
-  const { ref, url, setUrl, handleUploadImage, handleDeleteImage } = useUploadImage(profile);
+  const { ref, url, handleUploadImage } = useUploadImage(profile);
+  const pathname = usePathname();
+  const { setOpen, open } = useOpenAiChat();
+
   useEffect(() => {
     const createImageElement = async () => {
       if (url) {
         const center = getCanvasCenter({ zoom, camera, canvasRef });
 
-        console.log({
-          center,
-          camera,
-          zoom,
-          rect: canvasRef.current?.getBoundingClientRect(),
-        });
         const element: ElementT = {
           id: crypto.randomUUID(),
           type: 'image',
@@ -145,6 +144,23 @@ export function BoardToolRail({
           </Button>
         );
       })}
+
+      {/* {pathname !== '/' && (
+        <Button
+          type="button"
+          variant={open ? 'secondary' : 'ghost'}
+          size="icon"
+          aria-label={'Ai chat'}
+          aria-pressed={open}
+          title={'Ai chat'}
+          onClick={() => setOpen(!open)}
+          className={cn(
+            'size-8 rounded-md text-muted-foreground hover:text-foreground sm:size-10',
+            open && 'text-foreground shadow-xs',
+          )}>
+          <Sparkles className="size-4" aria-hidden />
+        </Button>
+      )} */}
       <div className="sm:hidden ml-3">
         <Popover>
           <PopoverTrigger>

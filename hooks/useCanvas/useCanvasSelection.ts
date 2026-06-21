@@ -1,3 +1,4 @@
+import { useHistoryStore } from '@/store/useHistoryStore';
 import { ElementT, EventsCanvas } from '@/types/Element';
 import { getWorld } from '@/utils/canvas';
 import { isIntersecting } from '@/utils/isIntersecting';
@@ -13,10 +14,14 @@ interface Props {
 export const useCanvasSelection = ({ zoom, elements, events, setElements, canvasRef }: Props) => {
   const startPointSelectionRef = useRef({ x: 0, y: 0 });
   const endPointSelectionRef = useRef({ x: 0, y: 0 });
+
   const isSelectionRef = useRef(false);
   const [selection, setSelection] = useState({ x: 0, y: 0, width: 0, height: 0 });
   const [selectedElementIds, setSelectedElementIds] = useState<string[]>([]);
   const selectedRef = useRef<string[]>([]);
+
+  const { setHistory } = useHistoryStore();
+
   const handleSelectionStart = (e: PointerEvent<HTMLDivElement>) => {
     if (!e.ctrlKey) return;
     if (!canvasRef.current) return;
@@ -72,10 +77,16 @@ export const useCanvasSelection = ({ zoom, elements, events, setElements, canvas
         setSelectedElementIds([]);
       }
       if (e.key === 'Delete') {
-        setElements((prev) => prev.filter((el) => !selectedRef.current.includes(el.id)));
-        for (let i = 0; i < selectedRef.current.length; i++) {
-          await events.handleDeleteElement(selectedRef.current[i]);
-        }
+        setElements((prev) => {
+          const next = prev.filter((el) => !selectedRef.current.includes(el.id));
+
+          queueMicrotask(() => {
+            setHistory(next);
+          });
+
+          return next;
+        });
+        await events.handleDeleteElements(selectedRef.current);
       }
     };
 

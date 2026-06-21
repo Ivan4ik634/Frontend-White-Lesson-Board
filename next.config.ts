@@ -10,6 +10,7 @@ const nextConfig: NextConfig = {
       },
     ],
   },
+  reactStrictMode: false,
 };
 
 const withNextIntl = createNextIntlPlugin('./i18n/request.ts');

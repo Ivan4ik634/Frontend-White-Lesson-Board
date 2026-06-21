@@ -9,9 +9,12 @@ export function LandingCanvasPreview() {
 
   const events = useMemo<EventsCanvas>(
     () => ({
-      handleCreateElement: () => undefined,
-      handleUpdateElement: () => undefined,
-      handleDeleteElement: () => undefined,
+      handleCreateElement: async () => undefined,
+      handleCreateElements: async () => undefined,
+      handleUpdateElement: async () => undefined,
+      handleDeleteElement: async () => undefined,
+      handleDeleteElements: async () => undefined,
+      handleReplaceBoard: async () => undefined,
     }),
     [],
   );

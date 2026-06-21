@@ -24,6 +24,10 @@ export type ElementT =
       x: number;
       y: number;
 
+      width: number;
+      height: number;
+
+      fontSize: number;
       text: string;
       isEditing?: boolean;
     }
@@ -40,8 +44,11 @@ export type ElementT =
     };
 
 export type EventsCanvas = {
-  handleCreateElement: (element: ElementT) => void;
-  handleUpdateElement: (element: ElementT) => void;
-  handleDeleteElement: (id: string) => void;
+  handleCreateElement: (element: ElementT) => Promise<void>;
+  handleCreateElements: (newElements: ElementT[]) => Promise<void>;
+  handleUpdateElement: (element: ElementT) => Promise<void>;
+  handleDeleteElement: (id: string) => Promise<void>;
+  handleDeleteElements: (ids: string[]) => Promise<void>;
+  handleReplaceBoard: (nextElements: ElementT[]) => Promise<void>;
 };
 export interface CursorsCanvas extends BoardUserT {}

@@ -1,17 +1,8 @@
 import { BoardTool } from '@/components/board/BoardToolRail';
+import { useHistoryStore } from '@/store/useHistoryStore';
 import { ElementT, EventsCanvas } from '@/types/Element';
 import { getWorld } from '@/utils/canvas';
 import { PointerEvent, RefObject, useRef } from 'react';
-
-export interface PenPoint {
-  x: number;
-  y: number;
-}
-
-export interface PenPath {
-  id: string;
-  points: PenPoint[];
-}
 
 interface Props {
   zoom: number;
@@ -35,6 +26,8 @@ export const useCanvasPen = ({
   const pathIdRef = useRef('');
   const isDrawingRef = useRef(false);
 
+  const { setHistory } = useHistoryStore();
+
   const handlePenStart = async (e: PointerEvent<HTMLDivElement>) => {
     if (tool !== 'pen') return;
 
@@ -43,6 +36,7 @@ export const useCanvasPen = ({
     if (!point) return;
 
     const id = crypto.randomUUID();
+
     pathIdRef.current = id;
     isDrawingRef.current = true;
 
@@ -63,27 +57,36 @@ export const useCanvasPen = ({
     if (!isDrawingRef.current) return;
 
     const point = getWorld({ e, zoom, canvasRef });
+
     if (!point) return;
 
     const id = pathIdRef.current;
 
-    const current = elements.find((el) => el.id === id && el.type === 'pen');
+    let updatedElement: ElementT | null = null;
 
-    if (!current || current.type !== 'pen') return;
+    setElements((prev) => {
+      const current = prev.find((el) => el.id === id && el.type === 'pen');
 
-    const updatedElement: ElementT = {
-      ...current,
-      points: [...current.points, point],
-    };
+      if (!current || current.type !== 'pen') {
+        return prev;
+      }
 
-    setElements((prev) =>
-      prev.map((el) => (el.id === id && el.type === 'pen' ? updatedElement : el)),
-    );
+      updatedElement = {
+        ...current,
+        points: [...current.points, point],
+      };
 
-    await events.handleUpdateElement(updatedElement);
+      return prev.map((el) => (el.id === id ? updatedElement! : el));
+    });
+
+    if (updatedElement) {
+      await events.handleUpdateElement(updatedElement);
+    }
   };
 
   const handlePenEnd = () => {
+    setHistory(elements);
+
     isDrawingRef.current = false;
     pathIdRef.current = '';
   };

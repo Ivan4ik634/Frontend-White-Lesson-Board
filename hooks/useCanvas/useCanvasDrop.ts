@@ -1,3 +1,4 @@
+import { useHistoryStore } from '@/store/useHistoryStore';
 import { ElementT, EventsCanvas } from '@/types/Element';
 import { findHitElement, getWorld } from '@/utils/canvas';
 import { PointerEvent, RefObject, useRef, useState } from 'react';
@@ -34,6 +35,7 @@ export const useCanvasDrop = ({
     startPoints: [],
   });
 
+  const { setHistory } = useHistoryStore();
   const [selectedElementMove, setSelectedElementMove] = useState('');
 
   const handleUpdateObjectDown = (e: PointerEvent<HTMLDivElement>) => {
@@ -51,7 +53,6 @@ export const useCanvasDrop = ({
       elements,
     });
     console.log('hit', hit);
-
     if (!hit) {
       setSelectedElementIds([]);
 
@@ -118,12 +119,16 @@ export const useCanvasDrop = ({
       };
     }
 
-    setElements((prev) => prev.map((el) => (el.id === id ? updatedElement : el)));
+    setElements((prev) => {
+      const next = prev.map((el) => (el.id === id ? updatedElement : el));
+      return next;
+    });
 
     await events.handleUpdateElement(updatedElement);
   };
   const handleUpdateObjectUp = () => {
     const id = transformRef.current.elementId;
+    setHistory(elements);
 
     transformRef.current = {
       isDragging: false,
@@ -138,8 +143,8 @@ export const useCanvasDrop = ({
   };
 
   return {
-    handleUpdateObjectDown,
     selectedElementMove,
+    handleUpdateObjectDown,
     handleUpdateObjectMove,
     handleUpdateObjectUp,
   };

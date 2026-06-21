@@ -1,3 +1,4 @@
+import { useHistoryStore } from '@/store/useHistoryStore';
 import { ElementT, EventsCanvas } from '@/types/Element';
 import { getWorld } from '@/utils/canvas';
 import { PointerEvent, RefObject, useRef } from 'react';
@@ -26,6 +27,9 @@ export const useCanvasResize = ({ elements, zoom, events, setElements, canvasRef
       height: 0,
     },
   });
+  const { setHistory } = useHistoryStore();
+  const snapshotRef = useRef<ElementT[]>([]);
+
   const handleResizeStart = (
     e: PointerEvent<HTMLDivElement>,
     corner: 'top-left' | 'top-right' | 'bottom-left' | 'bottom-right',
@@ -36,8 +40,9 @@ export const useCanvasResize = ({ elements, zoom, events, setElements, canvasRef
     const element = elements.find((el) => el.id === id);
 
     if (!element) return;
-    if (element.type === 'pen' || element.type === 'text') return;
+    if (element.type === 'pen') return;
 
+    snapshotRef.current = structuredClone(elements);
     const { x, y } = getWorld({ e, zoom, canvasRef });
 
     resizeRef.current = {
@@ -70,7 +75,7 @@ export const useCanvasResize = ({ elements, zoom, events, setElements, canvasRef
     const current = elements.find((el) => el.id === resizeRef.current.elementId);
 
     if (!current) return;
-    if (current.type === 'pen' || current.type === 'text') return;
+    if (current.type === 'pen') return;
 
     let newX = resizeRef.current.startElement.x;
     let newY = resizeRef.current.startElement.y;
@@ -120,6 +125,9 @@ export const useCanvasResize = ({ elements, zoom, events, setElements, canvasRef
     await events.handleUpdateElement(updatedElement);
   };
   const handleResizeEnd = () => {
+    if (!resizeRef.current.isResizing) return;
+    setHistory(snapshotRef.current);
+
     resizeRef.current = {
       isResizing: false,
 

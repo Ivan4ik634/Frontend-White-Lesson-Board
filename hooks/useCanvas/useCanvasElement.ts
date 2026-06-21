@@ -33,6 +33,7 @@ export const useCanvasElement = ({
     zoom,
     tool,
     color,
+    elements,
     events,
     setElements,
   });

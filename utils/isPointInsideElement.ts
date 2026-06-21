@@ -4,6 +4,7 @@ export function isPointInsideElement({ x, y, el }: { x: number; y: number; el: E
   switch (el.type) {
     case 'rectangle':
     case 'image':
+    case 'text':
       return x >= el.x && x <= el.x + el.width && y >= el.y && y <= el.y + el.height;
 
     case 'circle': {
@@ -13,9 +14,6 @@ export function isPointInsideElement({ x, y, el }: { x: number; y: number; el: E
 
       return (x - centerX) ** 2 + (y - centerY) ** 2 <= radius ** 2;
     }
-
-    case 'text':
-      return Math.max(el.text.length * 10, 20) && Math.abs(y - el.y) < 10;
 
     case 'pen':
       return el.points.some((p) => {

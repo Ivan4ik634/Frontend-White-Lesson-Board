@@ -6,11 +6,11 @@ import { RealtimeChannel } from '@supabase/supabase-js';
 import { useEffect, useRef, useState } from 'react';
 import { useProfile } from './useProfile';
 
-interface useBoardEventsProps {
+interface UseBoardStoreProps {
   boardId: string;
 }
 
-export const useBoardStore = ({ boardId }: useBoardEventsProps) => {
+export const useBoardStore = ({ boardId }: UseBoardStoreProps) => {
   const [elements, setElements] = useState<ElementT[]>([]);
   const [loading, setLoading] = useState(true);
   const [cameraInit, setCameraInit] = useState({ x: 0, y: 0 });
@@ -18,21 +18,27 @@ export const useBoardStore = ({ boardId }: useBoardEventsProps) => {
   const { profile } = useProfile();
 
   const lastUpdateRef = useRef(0);
-
   const channelRef = useRef<RealtimeChannel | null>(null);
+
   useEffect(() => {
     if (!profile) return;
+
     const get = async () => {
       setLoading(true);
 
-      const { data: user } = await boardUserService.findOne(profile?.id, boardId);
+      const { data: user } = await boardUserService.findOne(profile.id, boardId);
+
       const { data: objects } = await objectService.findInBoard(boardId);
 
       if (objects) {
         setElements(objects.flatMap((item) => item.object));
       }
+
       if (user) {
-        setCameraInit({ x: user.x, y: user.y });
+        setCameraInit({
+          x: user.x,
+          y: user.y,
+        });
       }
 
       setLoading(false);
@@ -41,18 +47,43 @@ export const useBoardStore = ({ boardId }: useBoardEventsProps) => {
     get();
   }, [boardId, profile]);
 
+  const broadcast = (event: string, payload: Record<string, unknown>) => {
+    if (!profile?.id) return;
+
+    channelRef.current?.send({
+      type: 'broadcast',
+      event,
+      payload: {
+        ...payload,
+        user_id: profile.id,
+      },
+    });
+  };
+
   const handleCreateElement = async (element: ElementT) => {
     if (!profile?.id) return;
 
     await objectService.create(boardId, profile.id, element);
 
-    channelRef.current?.send({
-      type: 'broadcast',
-      event: 'object-created',
-      payload: {
-        ...element,
-        user_id: profile.id,
-      },
+    broadcast('object-created', element);
+  };
+  const handleReplaceBoard = async (nextElements: ElementT[]) => {
+    if (!profile?.id) return;
+
+    await objectService.replaceBoard(boardId, profile.id, nextElements);
+
+    broadcast('board-replace', {
+      elements: nextElements,
+    });
+  };
+
+  const handleCreateElements = async (newElements: ElementT[]) => {
+    if (!profile?.id || newElements.length === 0) return;
+
+    await objectService.createMany(boardId, profile.id, newElements);
+
+    broadcast('objects-created', {
+      elements: newElements,
     });
   };
 
@@ -69,14 +100,7 @@ export const useBoardStore = ({ boardId }: useBoardEventsProps) => {
 
     await objectService.update(element.id, element);
 
-    channelRef.current?.send({
-      type: 'broadcast',
-      event: 'object-updated',
-      payload: {
-        ...element,
-        user_id: profile.id,
-      },
-    });
+    broadcast('object-updated', element);
   };
 
   const handleDeleteElement = async (id: string) => {
@@ -86,23 +110,37 @@ export const useBoardStore = ({ boardId }: useBoardEventsProps) => {
 
     await objectService.delete(id);
 
-    channelRef.current?.send({
-      type: 'broadcast',
-      event: 'object-deleted',
-      payload: {
-        id,
-        user_id: profile.id,
-      },
-    });
+    broadcast('object-deleted', { id });
+  };
+
+  const handleDeleteElements = async (ids: string[]) => {
+    if (!profile?.id || ids.length === 0) return;
+
+    setElements((prev) => prev.filter((el) => !ids.includes(el.id)));
+
+    await objectService.deleteMany(ids);
+
+    broadcast('objects-deleted', { ids });
   };
 
   useEffect(() => {
     if (!profile) return;
+    const handleReplaceBoardRealtime = (payload: { elements: ElementT[]; user_id: string }) => {
+      if (payload.user_id === profile.id) return;
+
+      setElements(payload.elements);
+    };
 
     const handleCreateElementRealtime = (payload: ElementT & { user_id: string }) => {
       if (payload.user_id === profile.id) return;
 
       setElements((prev) => [...prev, payload]);
+    };
+
+    const handleCreateElementsRealtime = (payload: { elements: ElementT[]; user_id: string }) => {
+      if (payload.user_id === profile.id) return;
+
+      setElements((prev) => [...prev, ...payload.elements]);
     };
 
     const handleUpdateElementRealtime = (payload: ElementT & { user_id: string }) => {
@@ -125,16 +163,59 @@ export const useBoardStore = ({ boardId }: useBoardEventsProps) => {
       setElements((prev) => prev.filter((el) => el.id !== payload.id));
     };
 
+    const handleDeleteElementsRealtime = (payload: { ids: string[]; user_id: string }) => {
+      if (payload.user_id === profile.id) return;
+
+      setElements((prev) => prev.filter((el) => !payload.ids.includes(el.id)));
+    };
+
     channelRef.current = supabase
       .channel(`object-${boardId}`)
       .on('broadcast', { event: 'object-created' }, ({ payload }) =>
-        handleCreateElementRealtime(payload as ElementT & { user_id: string }),
+        handleCreateElementRealtime(
+          payload as ElementT & {
+            user_id: string;
+          },
+        ),
+      )
+      .on('broadcast', { event: 'objects-created' }, ({ payload }) =>
+        handleCreateElementsRealtime(
+          payload as {
+            elements: ElementT[];
+            user_id: string;
+          },
+        ),
+      )
+      .on('broadcast', { event: 'board-replace' }, ({ payload }) =>
+        handleReplaceBoardRealtime(
+          payload as {
+            elements: ElementT[];
+            user_id: string;
+          },
+        ),
       )
       .on('broadcast', { event: 'object-updated' }, ({ payload }) =>
-        handleUpdateElementRealtime(payload as ElementT & { user_id: string }),
+        handleUpdateElementRealtime(
+          payload as ElementT & {
+            user_id: string;
+          },
+        ),
       )
       .on('broadcast', { event: 'object-deleted' }, ({ payload }) =>
-        handleDeleteElementRealtime(payload as { id: string; user_id: string }),
+        handleDeleteElementRealtime(
+          payload as {
+            id: string;
+            user_id: string;
+          },
+        ),
+      )
+      .on('broadcast', { event: 'objects-deleted' }, ({ payload }) =>
+        handleDeleteElementsRealtime(
+          payload as {
+            ids: string[];
+            user_id: string;
+          },
+        ),
       )
       .subscribe();
 
@@ -148,18 +229,18 @@ export const useBoardStore = ({ boardId }: useBoardEventsProps) => {
   return {
     events: {
       handleCreateElement,
+      handleCreateElements,
       handleUpdateElement,
       handleDeleteElement,
+      handleDeleteElements,
+      handleReplaceBoard,
     },
 
     loading,
-
     profile,
-
     cameraInit,
 
-    setElements,
-
     elements,
+    setElements,
   };
 };

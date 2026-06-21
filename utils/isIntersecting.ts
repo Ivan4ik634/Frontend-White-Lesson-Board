@@ -24,19 +24,6 @@ export const isIntersecting = ({ start, end, el }: Props) => {
     return elLeft <= selRight && elRight >= selLeft && elTop <= selBottom && elBottom >= selTop;
   }
 
-  if (el.type === 'text') {
-    const width = Math.max((el.text?.length || 0) * 10, 20);
-
-    const height = (el.text?.split('\n').length || 1) * 24;
-
-    const elLeft = el.x;
-    const elRight = el.x + width;
-    const elTop = el.y;
-    const elBottom = el.y + height;
-
-    return elLeft <= selRight && elRight >= selLeft && elTop <= selBottom && elBottom >= selTop;
-  }
-
   const width = el.width ?? 0;
   const height = el.height ?? 0;
 
