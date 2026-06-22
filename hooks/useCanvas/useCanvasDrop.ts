@@ -27,12 +27,14 @@ export const useCanvasDrop = ({
     startMouse: { x: number; y: number };
     startElement?: { x: number; y: number };
     startPoints?: { x: number; y: number }[];
+    startLine?: { x1: number; y1: number; x2: number; y2: number };
   }>({
     isDragging: false,
     elementId: '',
     startMouse: { x: 0, y: 0 },
     startElement: { x: 0, y: 0 },
     startPoints: [],
+    startLine: { x1: 0, y1: 0, x2: 0, y2: 0 },
   });
 
   const { setHistory } = useHistoryStore();
@@ -52,7 +54,6 @@ export const useCanvasDrop = ({
       y,
       elements,
     });
-    console.log('hit', hit);
     if (!hit) {
       setSelectedElementIds([]);
 
@@ -71,6 +72,21 @@ export const useCanvasDrop = ({
         startMouse: { x, y },
 
         startPoints: hit.points,
+      };
+
+      return;
+    }
+    if (hit.type === 'line') {
+      transformRef.current = {
+        isDragging: true,
+        elementId: hit.id,
+        startMouse: { x, y },
+        startLine: {
+          x1: hit.x1,
+          y1: hit.y1,
+          x2: hit.x2,
+          y2: hit.y2,
+        },
       };
 
       return;
@@ -111,6 +127,14 @@ export const useCanvasDrop = ({
           y: p.y + dy,
         })),
       };
+    } else if (current.type === 'line') {
+      updatedElement = {
+        ...current,
+        x1: transformRef.current.startLine!.x1 + dx,
+        y1: transformRef.current.startLine!.y1 + dy,
+        x2: transformRef.current.startLine!.x2 + dx,
+        y2: transformRef.current.startLine!.y2 + dy,
+      };
     } else {
       updatedElement = {
         ...current,
@@ -124,7 +148,7 @@ export const useCanvasDrop = ({
       return next;
     });
 
-    await events.handleUpdateElement(updatedElement);
+    events.handleUpdateElement(updatedElement);
   };
   const handleUpdateObjectUp = () => {
     const id = transformRef.current.elementId;
@@ -136,6 +160,7 @@ export const useCanvasDrop = ({
       startMouse: { x: 0, y: 0 },
       startElement: { x: 0, y: 0 },
       startPoints: [],
+      startLine: { x1: 0, y1: 0, x2: 0, y2: 0 },
     };
 
     setSelectedElementMove('');

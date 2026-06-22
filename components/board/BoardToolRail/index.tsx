@@ -1,17 +1,26 @@
 'use client';
 
-import { Button } from '@/components/ui/button';
+import { Button, buttonVariants } from '@/components/ui/button';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { colors } from '@/configs/colors';
 import { useUploadImage } from '@/hooks/useUploadImage';
 import { cn } from '@/lib/utils';
-import { useOpenAiChat } from '@/store/useOpenAiChat';
 import { ElementT, EventsCanvas } from '@/types/Element';
 import { UserT } from '@/types/UserT';
 import { getCanvasCenter } from '@/utils/canvas';
-import { Circle, Eraser, Hand, Image, MousePointer2, Pen, Square, Type } from 'lucide-react';
-import { usePathname } from 'next/navigation';
-import { useEffect } from 'react';
+import {
+  Circle,
+  Eraser,
+  Hand,
+  Image,
+  LineSquiggle,
+  Menu,
+  MousePointer2,
+  Pen,
+  Square,
+  Type,
+} from 'lucide-react';
+import { useEffect, useState } from 'react';
 import { IoIosColorFilter } from 'react-icons/io';
 
 export type BoardTool =
@@ -23,7 +32,6 @@ export type BoardTool =
   | 'cursor'
   | 'eraser'
   | 'image'
-  | 'arrow'
   | 'line';
 
 type BoardToolRailProps = {
@@ -45,6 +53,7 @@ const tools = [
   { value: 'eraser', label: 'Eraser', icon: Eraser },
   { value: 'rectangle', label: 'Rectangle', icon: Square },
   { value: 'circle', label: 'Circle', icon: Circle },
+  { value: 'line', label: 'Line', icon: LineSquiggle },
   { value: 'text', label: 'Text', icon: Type },
   { value: 'image', label: 'Image', icon: Image },
   { value: 'pen', label: 'Pen', icon: Pen },
@@ -54,6 +63,10 @@ const tools = [
   icon: typeof Hand;
 }>;
 
+const mobilePopoverToolValues = ['circle', 'line', 'image'];
+const mobilePopoverTools = tools.filter((tool) => mobilePopoverToolValues.includes(tool.value));
+const mobileVisibleTools = tools.filter((tool) => !mobilePopoverToolValues.includes(tool.value));
+
 export function BoardToolRail({
   activeTool,
   profile,
@@ -61,15 +74,26 @@ export function BoardToolRail({
   ref: canvasRef,
   zoom,
   camera,
-
   setColor,
   setElements,
   onToolChange,
   events,
 }: BoardToolRailProps) {
   const { ref, url, handleUploadImage } = useUploadImage(profile);
-  const pathname = usePathname();
-  const { setOpen, open } = useOpenAiChat();
+  const [isToolsOpen, setIsToolsOpen] = useState(false);
+  const [isColorsOpen, setIsColorsOpen] = useState(false);
+  const activePopoverTool = mobilePopoverTools.find((tool) => tool.value === activeTool);
+  const ActivePopoverToolIcon = activePopoverTool?.icon ?? Menu;
+
+  const selectTool = (tool: BoardTool) => {
+    onToolChange(tool);
+    setIsToolsOpen(false);
+  };
+
+  const openImagePicker = () => {
+    ref.current?.click();
+    setIsToolsOpen(false);
+  };
 
   useEffect(() => {
     const createImageElement = async () => {
@@ -94,39 +118,21 @@ export function BoardToolRail({
   }, [url]);
   return (
     <div
-      className="absolute bottom-3 items-center left-1/2 z-10 flex -translate-x-1/2 gap-1 rounded-lg border border-border bg-background/95 p-1 shadow-sm backdrop-blur sm:left-3 sm:top-1/2 sm:bottom-auto sm:-translate-x-0 sm:-translate-y-1/2 sm:flex-col"
+      className="absolute bottom-3 left-1/2 z-10 flex -translate-x-1/2 items-center gap-1 rounded-lg border border-border bg-background/95 p-1 shadow-sm backdrop-blur sm:left-3 sm:top-1/2 sm:bottom-auto sm:-translate-x-0 sm:-translate-y-1/2 sm:flex-col"
       aria-label="Board tools"
       onPointerDown={(event) => event.stopPropagation()}
       onPointerMove={(event) => event.stopPropagation()}
       onPointerUp={(event) => event.stopPropagation()}>
-      {tools.map(({ value, label, icon: Icon }) => {
-        if (value === 'image') {
-          return (
-            <div key={value} className="relative">
-              <input
-                ref={ref}
-                type="file"
-                accept="image/*"
-                onChange={handleUploadImage}
-                className="hidden"
-              />
-              <Button
-                type="button"
-                variant="ghost"
-                size="icon"
-                aria-label={label}
-                title={label}
-                onClick={async (e) => ref.current?.click()}
-                className={cn(
-                  'size-8 rounded-md text-muted-foreground hover:text-foreground sm:size-10',
-                  activeTool === value && 'text-foreground shadow-xs',
-                )}>
-                <Icon className="size-4" aria-hidden />
-              </Button>
-            </div>
-          );
-        }
-        return (
+      <input
+        ref={ref}
+        type="file"
+        accept="image/*"
+        onChange={handleUploadImage}
+        className="hidden"
+      />
+
+      <div className="hidden items-center gap-1 sm:flex sm:flex-col">
+        {tools.map(({ value, label, icon: Icon }) => (
           <Button
             key={value}
             type="button"
@@ -135,15 +141,69 @@ export function BoardToolRail({
             aria-label={label}
             aria-pressed={activeTool === value}
             title={label}
-            onClick={() => onToolChange(value)}
+            onClick={value === 'image' ? openImagePicker : () => selectTool(value)}
             className={cn(
               'size-8 rounded-md text-muted-foreground hover:text-foreground sm:size-10',
               activeTool === value && 'text-foreground shadow-xs',
             )}>
             <Icon className="size-4" aria-hidden />
           </Button>
-        );
-      })}
+        ))}
+      </div>
+
+      <div className="flex items-center gap-1 sm:hidden">
+        {mobileVisibleTools.map(({ value, label, icon: Icon }) => (
+          <Button
+            key={value}
+            type="button"
+            variant={activeTool === value ? 'secondary' : 'ghost'}
+            size="icon"
+            aria-label={label}
+            aria-pressed={activeTool === value}
+            title={label}
+            onClick={() => selectTool(value)}
+            className={cn(
+              'size-9 rounded-md text-muted-foreground hover:text-foreground',
+              activeTool === value && 'text-foreground shadow-xs',
+            )}>
+            <Icon className="size-4" aria-hidden />
+          </Button>
+        ))}
+
+        <Popover open={isToolsOpen} onOpenChange={setIsToolsOpen}>
+          <PopoverTrigger
+            type="button"
+            aria-label="Tools"
+            title="Tools"
+            className={cn(
+              buttonVariants({ variant: 'secondary', size: 'icon' }),
+              'size-9 gap-0.5 rounded-md text-foreground',
+            )}>
+            <ActivePopoverToolIcon className="size-4" aria-hidden />
+          </PopoverTrigger>
+          <PopoverContent side="top" align="center" className="w-auto p-1.5">
+            <div className="grid grid-cols-3 gap-1">
+              {mobilePopoverTools.map(({ value, label, icon: Icon }) => (
+                <Button
+                  key={value}
+                  type="button"
+                  variant={activeTool === value ? 'secondary' : 'ghost'}
+                  size="icon"
+                  aria-label={label}
+                  aria-pressed={activeTool === value}
+                  title={label}
+                  onClick={value === 'image' ? openImagePicker : () => selectTool(value)}
+                  className={cn(
+                    'size-10 rounded-md text-muted-foreground hover:text-foreground',
+                    activeTool === value && 'text-foreground shadow-xs',
+                  )}>
+                  <Icon className="size-4" aria-hidden />
+                </Button>
+              ))}
+            </div>
+          </PopoverContent>
+        </Popover>
+      </div>
 
       {/* {pathname !== '/' && (
         <Button
@@ -161,26 +221,30 @@ export function BoardToolRail({
           <Sparkles className="size-4" aria-hidden />
         </Button>
       )} */}
-      <div className="sm:hidden ml-3">
-        <Popover>
-          <PopoverTrigger>
-            <Button
-              asChild
-              className={'size-8 rounded-md text-muted-foreground hover:text-foreground sm:size-10'}
-              variant="secondary">
-              <IoIosColorFilter className="size-4" aria-hidden />
-            </Button>
+      <div className="ml-1 sm:hidden">
+        <Popover open={isColorsOpen} onOpenChange={setIsColorsOpen}>
+          <PopoverTrigger
+            type="button"
+            aria-label="Colors"
+            title="Colors"
+            className={cn(
+              buttonVariants({ variant: 'secondary', size: 'icon' }),
+              'size-9 rounded-md text-muted-foreground hover:text-foreground',
+            )}>
+            <IoIosColorFilter className="size-4" aria-hidden />
           </PopoverTrigger>
-          <PopoverContent className="bg-stone-200 w-auto flex-col p-2">
+          <PopoverContent side="top" align="center" className="w-auto flex-col bg-stone-200 p-2">
             {colors.map((c, i) => (
               <div
                 key={i}
-                className={`rounded-[5px] p-2 flex justify-center ${c.value === color ? 'bg-black/10' : ''}`}>
+                className={`flex justify-center rounded-[5px] p-2 ${c.value === color ? 'bg-black/10' : ''}`}>
                 <div
-                  onClick={() => setColor(c.value)}
-                  key={i}
+                  onClick={() => {
+                    setColor(c.value);
+                    setIsColorsOpen(false);
+                  }}
                   style={{ backgroundColor: c.value }}
-                  className="w-6 h-6 rounded-full cursor-pointer"
+                  className="h-6 w-6 cursor-pointer rounded-full"
                 />
               </div>
             ))}

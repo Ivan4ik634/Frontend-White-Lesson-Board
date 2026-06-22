@@ -1,5 +1,6 @@
 import { ElementT } from '@/types/Element';
 import { MouseEvent, PointerEvent, RefObject } from 'react';
+import { isPointInsideElement } from './isPointInsideElement';
 
 interface GetWorldProps {
   e: MouseEvent<HTMLDivElement> | PointerEvent<HTMLDivElement> | MouseEvent | PointerEvent;
@@ -64,12 +65,42 @@ interface findHitElementProps {
   elements: ElementT[];
 }
 export const findHitElement = ({ x, y, elements }: findHitElementProps) => {
-  return elements.find((el) => {
-    if (el.type === 'pen') {
-      return el.points.some((p) => {
-        return Math.abs(x - p.x) < 20 && Math.abs(y - p.y) < 20;
-      });
-    }
-    return x >= el.x && x <= el.x + el.width && y >= el.y && y <= el.y + el.height;
-  });
+  return [...elements].reverse().find((el) => isPointInsideElement({ x, y, el }));
 };
+export function pointToSegmentDistance(
+  x: number,
+  y: number,
+  x1: number,
+  y1: number,
+  x2: number,
+  y2: number,
+) {
+  const A = x - x1;
+  const B = y - y1;
+  const C = x2 - x1;
+  const D = y2 - y1;
+
+  const dot = A * C + B * D;
+  const lenSq = C * C + D * D;
+
+  let param = -1;
+  if (lenSq !== 0) param = dot / lenSq;
+
+  let xx: number, yy: number;
+
+  if (param < 0) {
+    xx = x1;
+    yy = y1;
+  } else if (param > 1) {
+    xx = x2;
+    yy = y2;
+  } else {
+    xx = x1 + param * C;
+    yy = y1 + param * D;
+  }
+
+  const dx = x - xx;
+  const dy = y - yy;
+
+  return Math.sqrt(dx * dx + dy * dy);
+}

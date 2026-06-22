@@ -4,8 +4,6 @@ export const filtersBoards = (boards: BoardT[], filters: FilterBoardsT) => {
   const filteredBoards = [...boards]
     .filter((board) => board.title.toLowerCase().includes(filters.search.toLowerCase()))
     .sort((a, b) => {
-      console.log(typeof a.members_count, a.members_count);
-      console.log(typeof b.members_count, b.members_count);
       if (a.access !== b.access) {
         if (filters.sortByAccess === 'Public') {
           return a.access === 'public' ? -1 : 1;

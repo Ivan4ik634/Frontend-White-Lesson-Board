@@ -40,7 +40,7 @@ export const useCanvasResize = ({ elements, zoom, events, setElements, canvasRef
     const element = elements.find((el) => el.id === id);
 
     if (!element) return;
-    if (element.type === 'pen') return;
+    if (element.type === 'pen' || element.type === 'line') return;
 
     snapshotRef.current = structuredClone(elements);
     const { x, y } = getWorld({ e, zoom, canvasRef });
@@ -61,11 +61,7 @@ export const useCanvasResize = ({ elements, zoom, events, setElements, canvasRef
   const handleResizeMove = async (e: PointerEvent<HTMLDivElement>) => {
     if (!resizeRef.current.isResizing) return;
 
-    const { x, y } = getWorld({
-      e,
-      zoom,
-      canvasRef,
-    });
+    const { x, y } = getWorld({ e, zoom, canvasRef });
 
     const dx = x - resizeRef.current.startMouse.x;
     const dy = y - resizeRef.current.startMouse.y;
@@ -74,55 +70,65 @@ export const useCanvasResize = ({ elements, zoom, events, setElements, canvasRef
 
     const current = elements.find((el) => el.id === resizeRef.current.elementId);
 
-    if (!current) return;
-    if (current.type === 'pen') return;
+    if (!current || current.type === 'pen') return;
 
     let newX = resizeRef.current.startElement.x;
     let newY = resizeRef.current.startElement.y;
+    let newW = resizeRef.current.startElement.width;
+    let newH = resizeRef.current.startElement.height;
 
-    let newWidth = resizeRef.current.startElement.width;
-    let newHeight = resizeRef.current.startElement.height;
-
+    // resize logic
     if (direction === 'bottom-right') {
-      newWidth += dx;
-      newHeight += dy;
+      newW += dx;
+      newH += dy;
     }
 
     if (direction === 'bottom-left') {
       newX += dx;
-      newWidth -= dx;
-
-      newHeight += dy;
+      newW -= dx;
+      newH += dy;
     }
 
     if (direction === 'top-right') {
       newY += dy;
-
-      newWidth += dx;
-      newHeight -= dy;
+      newW += dx;
+      newH -= dy;
     }
 
     if (direction === 'top-left') {
       newX += dx;
       newY += dy;
-
-      newWidth -= dx;
-      newHeight -= dy;
+      newW -= dx;
+      newH -= dy;
     }
+
+    // 🔥 FLIP (ВАЖНО)
+    if (newW < 0) {
+      newX += newW;
+      newW = Math.abs(newW);
+    }
+
+    if (newH < 0) {
+      newY += newH;
+      newH = Math.abs(newH);
+    }
+
+    // min size
+    const MIN = 20;
+    if (newW < MIN) newW = MIN;
+    if (newH < MIN) newH = MIN;
 
     const updatedElement = {
       ...current,
-
       x: newX,
       y: newY,
-
-      width: Math.max(20, newWidth),
-      height: Math.max(20, newHeight),
+      width: newW,
+      height: newH,
     };
 
     setElements((prev) => prev.map((el) => (el.id === updatedElement.id ? updatedElement : el)));
 
-    await events.handleUpdateElement(updatedElement);
+    events.handleUpdateElement(updatedElement);
   };
   const handleResizeEnd = () => {
     if (!resizeRef.current.isResizing) return;

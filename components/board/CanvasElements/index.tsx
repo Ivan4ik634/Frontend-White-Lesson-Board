@@ -13,6 +13,11 @@ interface Props {
   handleUpdateObjectDown: (e: PointerEvent<HTMLDivElement>, id: string) => void;
   handleUpdateObjectMove: (e: PointerEvent<HTMLDivElement>, id: string) => void;
   handleUpdateObjectUp: (e: PointerEvent<HTMLDivElement>, id: string) => void;
+  handleEditingLineDown: (
+    e: PointerEvent<SVGCircleElement>,
+    handle: 'start' | 'end',
+    id: string,
+  ) => void;
   handleResizeStart: (
     e: PointerEvent<HTMLDivElement>,
     corner: 'top-left' | 'top-right' | 'bottom-left' | 'bottom-right',
@@ -27,16 +32,13 @@ const CanvasElements: FC<Props> = ({
   editingId,
   elementsIdsRemove,
   startEditing,
+  handleEditingLineDown,
   handleResizeStart,
   handleUpdateObjectDown,
   handleUpdateObjectMove,
   handleUpdateObjectUp,
 }) => {
   return elements.map((el) => {
-    console.log(
-      'STATE AFTER UPDATE',
-      elements.find((e) => e.id === el?.id),
-    );
     if (el.type === 'pen')
       return (
         <svg
@@ -48,6 +50,53 @@ const CanvasElements: FC<Props> = ({
             stroke={`${selectedElementIds.includes(el.id) ? 'blue' : el.color}`}
             strokeWidth={3}
           />
+        </svg>
+      );
+    if (el.type === 'line')
+      return (
+        <svg
+          key={el.id}
+          className={`${elementsIdsRemove?.includes(el.id) ? 'opacity-50' : ''} z-10 no-select absolute overflow-visible`}>
+          <line
+            x1={el.x1}
+            y1={el.y1}
+            x2={el.x2}
+            y2={el.y2}
+            stroke={selectedElementIds.includes(el.id) ? 'blue' : el.color}
+            strokeWidth={2}
+          />
+
+          {selectedElementIds.includes(el.id) && (
+            <circle
+              cx={el.x1}
+              cy={el.y1}
+              r={6}
+              fill="white"
+              stroke="blue"
+              strokeWidth={2}
+              style={{ cursor: 'grab', pointerEvents: 'all' }}
+              onPointerDown={(e) => {
+                e.stopPropagation();
+                handleEditingLineDown(e, 'start', el.id);
+              }}
+            />
+          )}
+
+          {selectedElementIds.includes(el.id) && (
+            <circle
+              cx={el.x2}
+              cy={el.y2}
+              r={6}
+              fill="white"
+              stroke="blue"
+              strokeWidth={2}
+              style={{ cursor: 'grab', pointerEvents: 'all' }}
+              onPointerDown={(e) => {
+                e.stopPropagation();
+                handleEditingLineDown(e, 'end', el.id);
+              }}
+            />
+          )}
         </svg>
       );
 

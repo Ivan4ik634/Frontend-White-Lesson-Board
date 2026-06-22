@@ -12,6 +12,13 @@ interface Props {
   handleUpdateObjectMove: (e: PointerEvent<HTMLDivElement>) => void;
   handleUpdateObjectUp: () => void;
 
+  handleEditingLineMove: (e: PointerEvent<SVGCircleElement>) => void;
+  handleEditingLineUp: () => void;
+
+  handleLineDown: (e: PointerEvent<HTMLDivElement>) => void;
+  handleLineMove: (e: PointerEvent<HTMLDivElement>) => void;
+  handleLineUp: () => void;
+
   handlePenStart: (e: PointerEvent<HTMLDivElement>) => void;
   handlePenMove: (e: PointerEvent<HTMLDivElement>) => void;
   handlePenEnd: () => void;
@@ -48,6 +55,13 @@ export const useCanvasTrigger = ({
   handleUpdateObjectDown,
   handleUpdateObjectMove,
   handleUpdateObjectUp,
+
+  handleEditingLineMove,
+  handleEditingLineUp,
+
+  handleLineDown,
+  handleLineMove,
+  handleLineUp,
 
   handlePenStart,
   handlePenMove,
@@ -86,6 +100,10 @@ export const useCanvasTrigger = ({
         handleEraserStart(e);
         break;
 
+      case 'line':
+        handleLineDown(e);
+        break;
+
       case 'pen':
         handlePenStart(e);
         break;
@@ -103,6 +121,7 @@ export const useCanvasTrigger = ({
 
   const handleCanvasTriggerMove = (e: PointerEvent<HTMLDivElement>) => {
     handleResizeMove(e);
+    handleEditingLineMove(e as unknown as PointerEvent<SVGCircleElement>);
 
     if (e.ctrlKey) {
       handleSelectionMove(e);
@@ -116,6 +135,10 @@ export const useCanvasTrigger = ({
 
       case 'eraser':
         handleEraserMove(e);
+        break;
+
+      case 'line':
+        handleLineMove(e);
         break;
 
       case 'pen':
@@ -139,6 +162,7 @@ export const useCanvasTrigger = ({
     }
 
     handleResizeEnd();
+    handleEditingLineUp();
 
     if (e.ctrlKey) {
       handleSelectionEnd();
@@ -152,6 +176,10 @@ export const useCanvasTrigger = ({
 
       case 'eraser':
         handleEraserEnd();
+        break;
+
+      case 'line':
+        handleLineUp();
         break;
 
       case 'pen':

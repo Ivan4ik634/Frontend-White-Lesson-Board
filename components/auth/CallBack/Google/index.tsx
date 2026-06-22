@@ -14,7 +14,6 @@ const CallBackGoogle: FC<Props> = (props) => {
       const {
         data: { session },
       } = await supabase.auth.getSession();
-      console.log(session);
 
       if (!session) return;
 
@@ -36,10 +35,6 @@ const CallBackGoogle: FC<Props> = (props) => {
           avatar: user.user_metadata.avatar_url,
           language,
         });
-
-        console.log('Profile created');
-      } else {
-        console.log('Profile exists');
       }
       Cookies.set('auth', 'true', { expires: 30 });
       window.location.href = PAGES.HOME;

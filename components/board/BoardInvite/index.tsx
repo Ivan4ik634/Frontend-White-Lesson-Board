@@ -60,7 +60,6 @@ export function BoardInvite({ boardId }: BoardInviteProps) {
 
       const { error } = await boardUserService.create(boardId, userId);
 
-      console.log(error);
       if (error) {
         if (error.code === '23505') {
           router.replace(PAGES.BOARD(boardId));
@@ -97,9 +96,7 @@ export function BoardInvite({ boardId }: BoardInviteProps) {
             {failed ? t('inviteFailedTitle') : t('joiningTitle')}
           </h1>
           <p className="text-pretty text-sm leading-6 text-muted-foreground">
-            {failed
-              ? t('inviteFailedDescription')
-              : t('joiningDescription')}
+            {failed ? t('inviteFailedDescription') : t('joiningDescription')}
           </p>
         </div>
         {failed ? (

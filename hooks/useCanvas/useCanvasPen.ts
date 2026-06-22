@@ -47,7 +47,7 @@ export const useCanvasPen = ({
       points: [point],
     };
 
-    setElements((prev) => [...prev, element]);
+    setElements((prev) => [element, ...prev]);
 
     await events.handleCreateElement(element);
   };
@@ -80,7 +80,7 @@ export const useCanvasPen = ({
     });
 
     if (updatedElement) {
-      await events.handleUpdateElement(updatedElement);
+      events.handleUpdateElement(updatedElement);
     }
   };
 

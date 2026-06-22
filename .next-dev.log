@@ -2,16 +2,3 @@
 > white-lending@0.1.0 dev
 > next dev --turbopack
 
-▲ Next.js 16.2.6 (Turbopack)
-- Local:         http://localhost:3000
-- Network:       http://192.168.1.103:3000
-- Environments: .env.local
-✓ Ready in 568ms
-Creating turbopack project {
-  dir: 'C:\\Users\\12345\\Vs-code\\white-lesson-whiteboard',
-  testMode: true
-}
-
- GET /en 404 in 213ms (next.js: 85ms, proxy.ts: 6ms, application-code: 122ms)
- GET /en 404 in 157ms (next.js: 45ms, proxy.ts: 40ms, application-code: 72ms)
-[?25h

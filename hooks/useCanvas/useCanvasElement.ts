@@ -1,6 +1,6 @@
 import { BoardTool } from '@/components/board/BoardToolRail';
 import { ElementT, EventsCanvas } from '@/types/Element';
-import { RefObject, useEffect } from 'react';
+import { RefObject } from 'react';
 import { useCanvasElementObject } from './useCanvasElementObject';
 import { useCanvasElementText } from './useCanvasElementText';
 
@@ -24,10 +24,6 @@ export const useCanvasElement = ({
   tool,
   canvasRef,
 }: Props) => {
-  useEffect(() => {
-    console.log(elements);
-    if (elements) setElements(elements);
-  }, [elements]);
   const { handleElementStart, handleElementMove, handleElementEnd } = useCanvasElementObject({
     canvasRef,
     zoom,

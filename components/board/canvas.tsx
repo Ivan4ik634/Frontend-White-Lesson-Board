@@ -3,9 +3,11 @@
 import { useBoardCursors } from '@/hooks/useBoardCursors';
 import { useCanvasCamera } from '@/hooks/useCanvas/useCanvasCamera';
 import { useCanvasDrop } from '@/hooks/useCanvas/useCanvasDrop';
+import { useCanvasEditingLine } from '@/hooks/useCanvas/useCanvasEditingLine';
 import { useCanvasElement } from '@/hooks/useCanvas/useCanvasElement';
 import { useCanvasEraser } from '@/hooks/useCanvas/useCanvasEraser';
 import { useCanvasHotKeys } from '@/hooks/useCanvas/useCanvasHotKeys';
+import { useCanvasLine } from '@/hooks/useCanvas/useCanvasLine';
 import { useCanvasPen } from '@/hooks/useCanvas/useCanvasPen';
 import { useCanvasResize } from '@/hooks/useCanvas/useCanvasResize';
 import { useCanvasSelection } from '@/hooks/useCanvas/useCanvasSelection';
@@ -131,6 +133,15 @@ export function Canvas({
     zoom,
     resizeRef,
   });
+  const { handleLineDown, handleLineMove, handleLineUp } = useCanvasLine({
+    zoom,
+    tool,
+    setElements,
+    canvasRef,
+    events,
+    elements,
+    color,
+  });
   const { handleEraserStart, handleEraserMove, elementsIdsRemove, handleEraserEnd } =
     useCanvasEraser({
       zoom,
@@ -141,6 +152,14 @@ export function Canvas({
       tool,
     });
 
+  const { handleEditingLineDown, handleEditingLineMove, handleEditingLineUp } =
+    useCanvasEditingLine({
+      zoom,
+      canvasRef,
+      elements,
+      setElements,
+    });
+
   const { handleCanvasTriggerStart, handleCanvasTriggerMove, handleCanvasTriggerEnd } =
     useCanvasTrigger({
       tool,
@@ -148,7 +167,12 @@ export function Canvas({
       handleEraserStart,
       handleEraserMove,
       handleEraserEnd,
+      handleLineDown,
+      handleLineMove,
+      handleLineUp,
       handleSelectionMove,
+      handleEditingLineMove,
+      handleEditingLineUp,
       handleSelectionEnd,
       handleUpdateObjectDown,
       handleUpdateObjectMove,
@@ -165,6 +189,7 @@ export function Canvas({
       handleResizeMove,
       handleResizeEnd,
     });
+
   return (
     <div
       ref={ref}
@@ -215,6 +240,7 @@ export function Canvas({
           transformOrigin: '0 0',
         }}>
         <CanvasElements
+          handleEditingLineDown={handleEditingLineDown}
           handleResizeStart={handleResizeStart}
           selectedElementMove={selectedElementMove}
           selectedElementIds={selectedElementIds}

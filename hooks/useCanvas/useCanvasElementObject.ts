@@ -47,7 +47,7 @@ export const useCanvasElementObject = ({
       color,
     };
     setElements((prev) => {
-      const next = [...prev, element];
+      const next = [element, ...prev];
       return next;
     });
     events.handleCreateElement(element);
@@ -94,7 +94,7 @@ export const useCanvasElementObject = ({
       );
       return next;
     });
-    await events.handleUpdateElement(element);
+    events.handleUpdateElement(element);
   };
 
   const handleElementEnd = () => {

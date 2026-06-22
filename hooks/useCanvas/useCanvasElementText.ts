@@ -47,7 +47,7 @@ export const useCanvasElementText = ({
     };
 
     setElements((prev) => {
-      const next = [...prev, element];
+      const next = [element, ...prev];
       return next;
     });
 

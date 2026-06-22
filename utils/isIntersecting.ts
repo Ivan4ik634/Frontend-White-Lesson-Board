@@ -23,6 +23,16 @@ export const isIntersecting = ({ start, end, el }: Props) => {
 
     return elLeft <= selRight && elRight >= selLeft && elTop <= selBottom && elBottom >= selTop;
   }
+  if (el.type === 'line') {
+    const padding = 6;
+
+    const minX = Math.min(el.x1, el.x2) - padding;
+    const maxX = Math.max(el.x1, el.x2) + padding;
+    const minY = Math.min(el.y1, el.y2) - padding;
+    const maxY = Math.max(el.y1, el.y2) + padding;
+
+    return minX <= selRight && maxX >= selLeft && minY <= selBottom && maxY >= selTop;
+  }
 
   const width = el.width ?? 0;
   const height = el.height ?? 0;

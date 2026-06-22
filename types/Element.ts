@@ -17,6 +17,16 @@ export type ElementT =
     }
   | {
       id: string;
+      type: 'line';
+      x1: number;
+      y1: number;
+      x2: number;
+      color: string;
+
+      y2: number;
+    }
+  | {
+      id: string;
       type: 'text';
 
       color: string;
