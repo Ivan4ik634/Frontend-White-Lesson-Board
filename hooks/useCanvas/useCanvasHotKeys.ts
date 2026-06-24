@@ -82,7 +82,15 @@ export const useCanvasHotKeys = ({
                 y: p.y + 20,
               })),
             };
-
+          if (el.type === 'line')
+            return {
+              ...el,
+              id: crypto.randomUUID(),
+              x1: el.x1 + 20,
+              y1: el.y1 + 20,
+              x2: el.x2 + 20,
+              y2: el.y2 + 20,
+            };
           return {
             ...el,
             id: crypto.randomUUID(),
