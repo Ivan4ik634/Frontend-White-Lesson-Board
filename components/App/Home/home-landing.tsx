@@ -3,7 +3,6 @@
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { PAGES } from '@/configs/PAGES';
-import { useProfile } from '@/hooks/useProfile';
 import { supabase } from '@/lib/supabase';
 import { cn } from '@/lib/utils';
 import { Plus } from 'lucide-react';
@@ -11,12 +10,11 @@ import { useTranslations } from 'next-intl';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { toast } from 'sonner';
-import DialogCreateBoard from '../DialogCreateBoard';
+import DialogFormBoard from '../DialogFormBoard';
 export function HomeLanding() {
   const router = useRouter();
   const [boardId, setBoardId] = useState('');
-
-  const { profile } = useProfile();
+  const [open, setOpen] = useState(false);
 
   const t = useTranslations('home');
 
@@ -76,13 +74,13 @@ export function HomeLanding() {
               {t('or')}
             </span>
           </div>
-
-          <DialogCreateBoard>
-            <Button className="h-12 w-full rounded-xl border-border/80 text-base font-medium shadow-sm">
-              <Plus className="size-4" aria-hidden />
-              {t('addBoard')}
-            </Button>
-          </DialogCreateBoard>
+          <Button
+            onClick={() => setOpen(true)}
+            className="h-12 w-full rounded-xl border-border/80 text-base font-medium shadow-sm">
+            <Plus className="size-4" aria-hidden />
+            {t('addBoard')}
+          </Button>
+          <DialogFormBoard open={open} setOpen={setOpen} type="create" />
         </section>
       </main>
     </div>

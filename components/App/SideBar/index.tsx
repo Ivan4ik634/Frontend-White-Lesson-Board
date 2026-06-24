@@ -10,14 +10,15 @@ import { boardUserService } from '@/services/board-user.service';
 import { useBoardsStore } from '@/store/useBoards';
 import { LogOut, Plus } from 'lucide-react';
 import { useTranslations } from 'next-intl';
-import { FC } from 'react';
-import DialogCreateBoard from '../DialogCreateBoard';
+import { FC, useState } from 'react';
+import DialogCreateBoard from '../DialogFormBoard';
 import BoardItem from './BoardItem';
 import LinkItem from './LinkItem';
 interface Props {}
 
 const SideBar: FC<Props> = (props) => {
   const { profile } = useProfile();
+  const [open, setOpen] = useState(false);
   const pathname = usePathname();
   const t = useTranslations('sidebar');
   const common = useTranslations('common');
@@ -89,14 +90,17 @@ const SideBar: FC<Props> = (props) => {
             return (
               <>
                 {i === 2 && (
-                  <DialogCreateBoard>
+                  <div
+                    key={i}
+                    className="flex min-w-0 flex-col items-center text-muted-foreground justify-center ">
                     <div
-                      key={link.name}
-                      className={`flex min-w-0 flex-col items-center text-muted-foreground justify-center gap-1 rounded-[5px] px-2 py-2 text-xs transition-colors hover:bg-slate-100 dark:hover:bg-stone-950 
+                      onClick={() => setOpen(true)}
+                      className={`w-full h-full flex min-w-0 flex-col items-center text-muted-foreground justify-center  justify-center gap-1 rounded-[5px] px-2 py-2 text-xs transition-colors hover:bg-slate-100 dark:hover:bg-stone-950 
                 `}>
                       <Plus className="size-5 shrink-0 " />
                     </div>
-                  </DialogCreateBoard>
+                    <DialogCreateBoard open={open} setOpen={setOpen} type="create" />
+                  </div>
                 )}
                 <Link
                   href={link.href}

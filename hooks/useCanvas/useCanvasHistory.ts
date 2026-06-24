@@ -2,6 +2,8 @@
 
 import { useHistoryStore } from '@/store/useHistoryStore';
 import { ElementT, EventsCanvas } from '@/types/Element';
+import { usePathname } from 'next/navigation';
+import { useEffect } from 'react';
 
 type UseCanvasHistoryProps = {
   events: EventsCanvas;
@@ -9,7 +11,12 @@ type UseCanvasHistoryProps = {
 };
 
 export function useCanvasHistory({ events, setElements }: UseCanvasHistoryProps) {
-  const { past, future, undo, redo } = useHistoryStore();
+  const { past, future, undo, redo, reset } = useHistoryStore();
+  const pathname = usePathname();
+
+  useEffect(() => {
+    reset();
+  }, [pathname]);
 
   const handleUndo = () => {
     const previousElements = undo();

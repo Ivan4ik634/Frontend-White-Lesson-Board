@@ -14,7 +14,7 @@ export const boardService = {
     return supabase.from('board').insert(data).select().single();
   },
 
-  update(id: string, update: { access: 'public' | 'private' }) {
+  update(id: string, update: Partial<BoardCreate>) {
     return supabase.from('board').update(update).eq('id', id);
   },
 

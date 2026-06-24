@@ -1,9 +1,13 @@
+import { PAGES } from '@/configs/PAGES';
 import { supabase } from '@/lib/supabase';
 import { boardUserService } from '@/services/board-user.service';
 import { objectService } from '@/services/object.service';
 import { ElementT } from '@/types/Element';
 import { RealtimeChannel } from '@supabase/supabase-js';
+import { useTranslations } from 'next-intl';
+import { useRouter } from 'next/navigation';
 import { useEffect, useRef, useState } from 'react';
+import { toast } from 'sonner';
 import { useProfile } from './useProfile';
 
 interface UseBoardStoreProps {
@@ -14,8 +18,10 @@ export const useBoardStore = ({ boardId }: UseBoardStoreProps) => {
   const [elements, setElements] = useState<ElementT[]>([]);
   const [loading, setLoading] = useState(true);
   const [cameraInit, setCameraInit] = useState({ x: 0, y: 0 });
-
+  const router = useRouter();
   const { profile } = useProfile();
+
+  const t = useTranslations('boards');
 
   const lastUpdateRef = useRef(0);
   const channelRef = useRef<RealtimeChannel | null>(null);
@@ -216,6 +222,19 @@ export const useBoardStore = ({ boardId }: UseBoardStoreProps) => {
             user_id: string;
           },
         ),
+      )
+      .on(
+        'postgres_changes',
+        {
+          event: 'DELETE',
+          schema: 'public',
+          table: 'board',
+          filter: `id=eq.${boardId}`,
+        },
+        (payload) => {
+          toast.error(t('boardDeleted'));
+          router.push(PAGES.HOME);
+        },
       )
       .subscribe();
 

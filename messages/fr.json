@@ -37,7 +37,15 @@
     "deleteImage": "Supprimer l'image",
     "boardImageAlt": "Image du tableau",
     "boardNamePlaceholder": "Nom du tableau...",
-    "boardDescriptionPlaceholder": "Description du tableau..."
+    "boardDescriptionPlaceholder": "Description du tableau...",
+     "boardCreated": "Tableau créé avec succès", 
+  "boardUpdated": "Tableau mis à jour avec succès",
+  "boardDeleted": "Tableau supprimé avec succès",
+  "boardNotFound": "Tableau introuvable",
+  "boardDelete": "Supprimer le tableau",
+  "boardEdit": "Modifier le tableau",
+  "boardLeave": "Quitter le tableau",
+  "boardView": "Voir le tableau"
   },
   "settings": {
     "profile": "Profil",

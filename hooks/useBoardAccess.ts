@@ -119,6 +119,10 @@ export const useBoardAccess = ({ boardId }: Props) => {
 
     setLeaving(false);
 
+    if (isOwner) {
+      await boardService.delete(boardId);
+    }
+
     if (error) {
       toast.error(error.message);
       return;

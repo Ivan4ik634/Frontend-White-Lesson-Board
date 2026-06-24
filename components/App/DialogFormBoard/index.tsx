@@ -7,7 +7,6 @@ import {
   DialogContent,
   DialogFooter,
   DialogTitle,
-  DialogTrigger,
 } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import {
@@ -26,53 +25,75 @@ import { useUploadImage } from '@/hooks/useUploadImage';
 import { useRouter } from '@/i18n/navigation';
 import { boardUserService } from '@/services/board-user.service';
 import { boardService } from '@/services/board.service';
-import { BoardCreateForm } from '@/types/Board';
+import { BoardCreate, BoardCreateForm } from '@/types/Board';
 import { useTranslations } from 'next-intl';
 import { FC, useState } from 'react';
 import { SubmitHandler, useForm } from 'react-hook-form';
 import { CiImageOn } from 'react-icons/ci';
 import { FaRegTrashCan } from 'react-icons/fa6';
 interface Props {
-  children: React.ReactNode;
+  children?: React.ReactNode;
+  boardId?: string;
+  type?: 'create' | 'edit';
+  initData?: BoardCreate;
+  open?: boolean;
+  setOpen?: (open: boolean) => void;
 }
 
-const DialogCreateBoard: FC<Props> = ({ children }) => {
+const DialogFormBoard: FC<Props> = ({ boardId, setOpen, open = false, initData, type }) => {
   const { profile } = useProfile();
   const router = useRouter();
   const t = useTranslations('boards');
   const common = useTranslations('common');
   const validation = useTranslations('validation');
+  const { ref, url, handleUploadImage, handleDeleteImage } = useUploadImage(
+    profile,
+    initData?.image,
+  );
 
-  const { ref, url, handleUploadImage, handleDeleteImage } = useUploadImage(profile);
-
-  const [access, setAccess] = useState<'Public' | 'Private'>('Public');
+  const [access, setAccess] = useState<'Public' | 'Private'>(
+    initData?.access
+      ? ((initData.access.slice(0, 1).toUpperCase() + initData.access.slice(1)) as
+          | 'Public'
+          | 'Private')
+      : 'Public',
+  );
   const {
     handleSubmit,
     register,
     formState: { errors },
   } = useForm<BoardCreateForm>({
     defaultValues: {
-      title: '',
-      description: '',
+      title: initData?.title || '',
+      description: initData?.description || '',
     },
   });
 
   const onSubmit: SubmitHandler<BoardCreateForm> = async (data) => {
     if (!profile) return;
-    const { data: board } = await boardService.create({
-      user_id: profile.id,
-      image: url,
-      description: data.description,
-      title: data.title,
-      access: access.toLowerCase() as 'public' | 'private',
-    });
-    await boardUserService.create(board.id, profile.id);
-    router.push(PAGES.BOARD(board.id));
+    if (type === 'create') {
+      const { data: board } = await boardService.create({
+        user_id: profile.id,
+        image: url,
+        description: data.description,
+        title: data.title,
+        access: access.toLowerCase() as 'public' | 'private',
+      });
+      await boardUserService.create(board.id, profile.id);
+      router.push(PAGES.BOARD(board.id));
+    } else {
+      await boardService.update(boardId!, {
+        image: url,
+        description: data.description,
+        title: data.title,
+        access: access.toLowerCase() as 'public' | 'private',
+      });
+      router.push(PAGES.BOARD(boardId!));
+    }
   };
 
   return (
-    <Dialog>
-      <DialogTrigger render={children as React.ReactElement} />
+    <Dialog onOpenChange={setOpen} open={open}>
       <DialogContent className="max-h-[calc(100dvh-2rem)] overflow-y-auto sm:max-w-[425px]">
         <DialogTitle>{t('createTitle')}</DialogTitle>
         <form onSubmit={handleSubmit(onSubmit)} className={'flex flex-col gap-3 w-full'}>
@@ -145,4 +166,4 @@ const DialogCreateBoard: FC<Props> = ({ children }) => {
   );
 };
 
-export default DialogCreateBoard;
+export default DialogFormBoard;

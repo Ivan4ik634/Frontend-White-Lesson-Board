@@ -37,7 +37,15 @@
     "deleteImage": "Delete image",
     "boardImageAlt": "Board image",
     "boardNamePlaceholder": "Board name...",
-    "boardDescriptionPlaceholder": "Board description..."
+    "boardDescriptionPlaceholder": "Board description...",
+    "boardCreated": "Board created successfully",
+    "boardUpdated": "Board updated successfully",
+    "boardDeleted": "Board deleted successfully",
+    "boardNotFound": "Board not found",
+    "boardDelete":"Delete board",
+    "boardEdit":"Edit board",
+    "boardLeave":"Leave board",
+    "boardView":"View board"
   },
   "settings": {
     "profile": "Profile",

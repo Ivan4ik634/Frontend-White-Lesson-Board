@@ -4,9 +4,9 @@ import { useTranslations } from 'next-intl';
 import { useRef, useState } from 'react';
 import { toast } from 'sonner';
 
-export const useUploadImage = (profile: UserT | null) => {
+export const useUploadImage = (profile: UserT | null, initialUrl?: string) => {
   const ref = useRef<HTMLInputElement>(null);
-  const [url, setUrl] = useState('');
+  const [url, setUrl] = useState(initialUrl || '');
 
   const t = useTranslations('hooks');
 

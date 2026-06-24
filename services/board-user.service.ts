@@ -44,8 +44,8 @@ export const boardUserService = {
         access,
         description,
         members_count,
-        created_at
-
+        created_at,
+        user_id
         ),
         created_at,
         x,

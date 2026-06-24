@@ -37,7 +37,15 @@
     "deleteImage": "Видалити зображення",
     "boardImageAlt": "Зображення дошки",
     "boardNamePlaceholder": "Назва дошки...",
-    "boardDescriptionPlaceholder": "Опис дошки..."
+    "boardDescriptionPlaceholder": "Опис дошки...",
+   "boardCreated": "Дошку успішно створено",
+  "boardUpdated": "Дошку успішно оновлено",
+  "boardDeleted": "Дошку успішно видалено",
+  "boardNotFound": "Дошку не знайдено",
+  "boardDelete": "Видалити дошку",
+  "boardEdit": "Редагувати дошку",
+  "boardLeave": "Покинути дошку",
+  "boardView": "Переглянути дошку"
   },
   "settings": {
     "profile": "Профіль",

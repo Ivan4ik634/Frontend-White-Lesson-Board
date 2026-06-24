@@ -20,13 +20,17 @@ const BROADCAST_INTERVAL = 40;
 const PERSIST_INTERVAL = 1500;
 
 export const useBoardCursors = ({ boardId, canvasRef, zoom, mode }: UseBoardCursorsProps) => {
-  if (mode === 'demo') return;
   const { setUsers, addUser } = useUsersInBoard();
   const { profile } = useProfile();
 
   const channelRef = useRef<RealtimeChannel | null>(null);
 
   useEffect(() => {
+    setUsers([]);
+  }, [boardId]);
+
+  useEffect(() => {
+    if (mode === 'demo') return;
     const getUsers = async () => {
       const { data, error } = await boardUserService.findInBoard(boardId);
       if (error) {
@@ -39,6 +43,7 @@ export const useBoardCursors = ({ boardId, canvasRef, zoom, mode }: UseBoardCurs
   }, []);
 
   useEffect(() => {
+    if (mode === 'demo') return;
     const channel = supabase
       .channel(`user-add-${boardId}`)
       .on(
@@ -63,6 +68,7 @@ export const useBoardCursors = ({ boardId, canvasRef, zoom, mode }: UseBoardCurs
   }, [boardId]);
 
   useEffect(() => {
+    if (mode === 'demo') return;
     channelRef.current = supabase
       .channel(`board-cursors-${boardId}`)
       .on('broadcast', { event: 'cursor-moved' }, async ({ payload }) => {
@@ -99,6 +105,7 @@ export const useBoardCursors = ({ boardId, canvasRef, zoom, mode }: UseBoardCurs
 
   useEffect(() => {
     if (!canvasRef.current) return;
+    if (mode === 'demo') return;
 
     const canvas = canvasRef.current;
 

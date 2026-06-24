@@ -9,6 +9,7 @@ type HistoryStore = {
   future: ElementsState[];
 
   setHistory: (next: ElementsState) => void;
+  reset: () => void;
 
   undo: () => ElementsState | null;
   redo: () => ElementsState | null;
@@ -27,6 +28,7 @@ export const useHistoryStore = create<HistoryStore>((set, get) => ({
       future: [],
     });
   },
+  reset: () => set({ past: [], present: [], future: [] }),
 
   undo: () => {
     const { past, present, future } = get();
