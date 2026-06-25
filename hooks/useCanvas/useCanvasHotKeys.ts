@@ -28,7 +28,7 @@ export const useCanvasHotKeys = ({
     setElements,
   });
 
-  const { setHistory } = useHistoryStore();
+  const { push } = useHistoryStore();
 
   useEffect(() => {
     elementsRef.current = elements;
@@ -101,10 +101,12 @@ export const useCanvasHotKeys = ({
 
         setElements((prev) => {
           const next = [...prev, ...cloned];
-          setHistory(next);
+
           return next;
         });
-
+        for (const el of cloned) {
+          push({ type: 'CREATE', element: el });
+        }
         setSelectedElementIds(cloned.map((el) => el.id));
 
         await events.handleCreateElements(cloned);
@@ -114,5 +116,5 @@ export const useCanvasHotKeys = ({
     window.addEventListener('keydown', handleKeyDown);
 
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [events, setElements, setSelectedElementIds, handleUndo, handleRedo, setHistory]);
+  }, [events, setElements, setSelectedElementIds, handleUndo, handleRedo, push]);
 };

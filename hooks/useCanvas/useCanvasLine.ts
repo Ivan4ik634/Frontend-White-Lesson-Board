@@ -22,9 +22,11 @@ export const useCanvasLine = ({
   elements,
   color,
 }: Props) => {
-  const objectIdRef = useRef<string>('');
+  const objectRefId = useRef<string>('');
+  const objectRef = useRef<ElementT | null>(null);
+
   const isDrawingRef = useRef(false);
-  const { setHistory } = useHistoryStore();
+  const { push } = useHistoryStore();
 
   const handleLineDown = (e: PointerEvent<HTMLDivElement>) => {
     if (tool !== 'line') return;
@@ -44,24 +46,24 @@ export const useCanvasLine = ({
       const next = [line, ...prev];
       return next;
     });
-
-    objectIdRef.current = line.id;
+    objectRefId.current = line.id;
+    objectRef.current = line;
     events.handleCreateElement(line);
   };
   const handleLineMove = (e: PointerEvent<HTMLDivElement>) => {
     if (tool !== 'line') return;
-    if (!objectIdRef.current) return;
+    if (!objectRefId.current) return;
 
     const { x, y } = getWorld({ e, zoom, canvasRef });
 
-    const element = elements.find((el) => el.id === objectIdRef.current);
+    const element = elements.find((el) => el.id === objectRefId.current);
 
     if (!element || element.type !== 'line') return;
 
     setElements((prev) => {
-      const next = prev.map((el) => (el.id === objectIdRef.current ? { ...el, x2: x, y2: y } : el));
+      const next = prev.map((el) => (el.id === objectRefId.current ? { ...el, x2: x, y2: y } : el));
 
-      const updated = next.find((el) => el.id === objectIdRef.current);
+      const updated = next.find((el) => el.id === objectRefId.current);
 
       if (updated) {
         events.handleUpdateElement(updated);
@@ -71,8 +73,14 @@ export const useCanvasLine = ({
     });
   };
   const handleLineUp = () => {
-    setHistory(elements);
-    objectIdRef.current = '';
+    push({
+      type: 'UPDATE',
+      id: objectRefId.current,
+      before: objectRef.current!,
+      after: elements.find((el) => el.id === objectRef.current!.id)!,
+    });
+    objectRefId.current = '';
+    objectRef.current = null;
   };
 
   return {

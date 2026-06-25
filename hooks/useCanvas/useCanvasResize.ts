@@ -11,7 +11,13 @@ interface Props {
   events: EventsCanvas;
 }
 export const useCanvasResize = ({ elements, zoom, events, setElements, canvasRef }: Props) => {
-  const resizeRef = useRef({
+  const resizeRef = useRef<{
+    isResizing: boolean;
+    elementId: string;
+    direction: string;
+    startMouse: { x: number; y: number };
+    startElement: ElementT | null;
+  }>({
     isResizing: false,
 
     elementId: '',
@@ -20,15 +26,9 @@ export const useCanvasResize = ({ elements, zoom, events, setElements, canvasRef
 
     startMouse: { x: 0, y: 0 },
 
-    startElement: {
-      x: 0,
-      y: 0,
-      width: 0,
-      height: 0,
-    },
+    startElement: null,
   });
-  const { setHistory } = useHistoryStore();
-  const snapshotRef = useRef<ElementT[]>([]);
+  const { push } = useHistoryStore();
 
   const handleResizeStart = (
     e: PointerEvent<HTMLDivElement>,
@@ -42,7 +42,6 @@ export const useCanvasResize = ({ elements, zoom, events, setElements, canvasRef
     if (!element) return;
     if (element.type === 'pen' || element.type === 'line') return;
 
-    snapshotRef.current = structuredClone(elements);
     const { x, y } = getWorld({ e, zoom, canvasRef });
 
     resizeRef.current = {
@@ -50,12 +49,7 @@ export const useCanvasResize = ({ elements, zoom, events, setElements, canvasRef
       elementId: id,
       direction: corner,
       startMouse: { x, y },
-      startElement: {
-        x: element.x,
-        y: element.y,
-        width: element.width,
-        height: element.height,
-      },
+      startElement: element,
     };
   };
   const handleResizeMove = async (e: PointerEvent<HTMLDivElement>) => {
@@ -70,12 +64,17 @@ export const useCanvasResize = ({ elements, zoom, events, setElements, canvasRef
 
     const current = elements.find((el) => el.id === resizeRef.current.elementId);
 
-    if (!current || current.type === 'pen') return;
+    if (!current || current.type === 'pen' || current.type === 'line') return;
+    if (
+      resizeRef.current.startElement?.type === 'line' ||
+      resizeRef.current.startElement?.type === 'pen'
+    )
+      return;
 
-    let newX = resizeRef.current.startElement.x;
-    let newY = resizeRef.current.startElement.y;
-    let newW = resizeRef.current.startElement.width;
-    let newH = resizeRef.current.startElement.height;
+    let newX = resizeRef.current.startElement!.x;
+    let newY = resizeRef.current.startElement!.y;
+    let newW = resizeRef.current.startElement!.width;
+    let newH = resizeRef.current.startElement!.height;
 
     // resize logic
     if (direction === 'bottom-right') {
@@ -102,7 +101,6 @@ export const useCanvasResize = ({ elements, zoom, events, setElements, canvasRef
       newH -= dy;
     }
 
-    // 🔥 FLIP (ВАЖНО)
     if (newW < 0) {
       newX += newW;
       newW = Math.abs(newW);
@@ -132,8 +130,12 @@ export const useCanvasResize = ({ elements, zoom, events, setElements, canvasRef
   };
   const handleResizeEnd = () => {
     if (!resizeRef.current.isResizing) return;
-    setHistory(snapshotRef.current);
-
+    push({
+      type: 'UPDATE',
+      id: resizeRef.current.elementId,
+      before: resizeRef.current.startElement!,
+      after: elements.find((el) => el.id === resizeRef.current.elementId)!,
+    });
     resizeRef.current = {
       isResizing: false,
 
@@ -143,12 +145,7 @@ export const useCanvasResize = ({ elements, zoom, events, setElements, canvasRef
 
       startMouse: { x: 0, y: 0 },
 
-      startElement: {
-        x: 0,
-        y: 0,
-        width: 0,
-        height: 0,
-      },
+      startElement: null,
     };
   };
   return {

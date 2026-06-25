@@ -22,10 +22,16 @@ export const useCanvasElementObject = ({
   tool,
   setElements,
 }: Props) => {
-  const startPointRef = useRef({ x: 0, y: 0 });
+  const startRef = useRef<{ element: ElementT | null; x: number; y: number }>({
+    element: null,
+    x: 0,
+    y: 0,
+  });
   const objectIdRef = useRef<string>('');
   const isDrawingRef = useRef(false);
-  const { setHistory } = useHistoryStore();
+
+  const { push } = useHistoryStore();
+
   const handleElementStart = async (
     e: PointerEvent<HTMLDivElement>,
     type: 'rectangle' | 'circle',
@@ -33,7 +39,6 @@ export const useCanvasElementObject = ({
     if (tool !== type) return;
     isDrawingRef.current = true;
     const { x, y } = getWorld({ e, zoom, canvasRef });
-    startPointRef.current = { x, y };
 
     const id = crypto.randomUUID();
     objectIdRef.current = id;
@@ -46,6 +51,7 @@ export const useCanvasElementObject = ({
       type,
       color,
     };
+    startRef.current = { element, x, y };
     setElements((prev) => {
       const next = [element, ...prev];
       return next;
@@ -61,7 +67,7 @@ export const useCanvasElementObject = ({
 
     const { x, y } = getWorld({ e, zoom, canvasRef });
 
-    const start = startPointRef.current;
+    const start = startRef.current;
 
     const width = x - start.x;
     const height = y - start.y;
@@ -98,7 +104,12 @@ export const useCanvasElementObject = ({
   };
 
   const handleElementEnd = () => {
-    setHistory(elements);
+    push({
+      type: 'UPDATE',
+      id: objectIdRef.current,
+      before: startRef.current.element!,
+      after: elements.find((el) => el.id === objectIdRef.current)!,
+    });
 
     isDrawingRef.current = false;
   };

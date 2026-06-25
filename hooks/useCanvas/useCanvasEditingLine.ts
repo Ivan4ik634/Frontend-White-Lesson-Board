@@ -1,3 +1,4 @@
+import { useHistoryStore } from '@/store/useHistoryStore';
 import { ElementT } from '@/types/Element';
 import { getWorld } from '@/utils/canvas';
 import { PointerEvent, RefObject, useRef, useState } from 'react';
@@ -9,7 +10,16 @@ interface Props {
 }
 export const useCanvasEditingLine = ({ zoom, setElements, canvasRef, elements }: Props) => {
   const [isEditingLine, setIsEditingLine] = useState(false);
-  const objectRef = useRef({
+  const objectRef = useRef<{
+    startElement: ElementT | null;
+    startMouseX: number;
+    startMouseY: number;
+    startX: number;
+    startY: number;
+    handle: 'start' | 'end' | '';
+    id: string;
+  }>({
+    startElement: null,
     startMouseX: 0,
     startMouseY: 0,
 
@@ -18,6 +28,8 @@ export const useCanvasEditingLine = ({ zoom, setElements, canvasRef, elements }:
     handle: '',
     id: '',
   });
+  const { push } = useHistoryStore();
+
   const handleEditingLineDown = (
     e: PointerEvent<SVGCircleElement>,
     handle: 'start' | 'end',
@@ -31,6 +43,7 @@ export const useCanvasEditingLine = ({ zoom, setElements, canvasRef, elements }:
     if (!element || element.type !== 'line') return;
 
     objectRef.current = {
+      startElement: element,
       startMouseX: x,
       startMouseY: y,
       startX: handle === 'start' ? element.x1 : element.x2,
@@ -68,8 +81,15 @@ export const useCanvasEditingLine = ({ zoom, setElements, canvasRef, elements }:
   };
   const handleEditingLineUp = () => {
     if (!isEditingLine) return;
+    push({
+      type: 'UPDATE',
+      id: objectRef.current.id,
+      before: objectRef.current.startElement!,
+      after: elements.find((el) => el.id === objectRef.current.id)!,
+    });
     setIsEditingLine(false);
     objectRef.current = {
+      startElement: null,
       startMouseX: 0,
       startMouseY: 0,
       startX: 0,

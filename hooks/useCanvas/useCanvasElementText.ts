@@ -25,8 +25,9 @@ export const useCanvasElementText = ({
 }: Props) => {
   const [editingId, setEditingId] = useState<string | null>(null);
   const [draft, setDraft] = useState('');
+  const startElement = useRef<ElementT | null>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
-  const { setHistory } = useHistoryStore();
+  const { push } = useHistoryStore();
 
   const handleTextStart = async (e: PointerEvent<HTMLDivElement>) => {
     if (tool !== 'text') return;
@@ -45,12 +46,11 @@ export const useCanvasElementText = ({
       fontSize: 16,
       text: '',
     };
-
+    startElement.current = element;
     setElements((prev) => {
-      const next = [element, ...prev];
+      const next = [...prev, element];
       return next;
     });
-
     setEditingId(id);
     setDraft('');
 
@@ -91,7 +91,12 @@ export const useCanvasElementText = ({
 
     setElements(next);
 
-    setHistory(next);
+    push({
+      type: 'UPDATE',
+      id: editingId!,
+      before: startElement.current!,
+      after: { ...current, text: value },
+    });
 
     setEditingId(null);
     setDraft('');

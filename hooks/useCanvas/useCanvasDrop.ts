@@ -22,6 +22,7 @@ export const useCanvasDrop = ({
   resizeRef,
 }: Props) => {
   const transformRef = useRef<{
+    startEl: ElementT | null;
     isDragging: boolean;
     elementId: string;
     startMouse: { x: number; y: number };
@@ -29,6 +30,7 @@ export const useCanvasDrop = ({
     startPoints?: { x: number; y: number }[];
     startLine?: { x1: number; y1: number; x2: number; y2: number };
   }>({
+    startEl: null,
     isDragging: false,
     elementId: '',
     startMouse: { x: 0, y: 0 },
@@ -37,7 +39,7 @@ export const useCanvasDrop = ({
     startLine: { x1: 0, y1: 0, x2: 0, y2: 0 },
   });
 
-  const { setHistory } = useHistoryStore();
+  const { push } = useHistoryStore();
   const [selectedElementMove, setSelectedElementMove] = useState('');
 
   const handleUpdateObjectDown = (e: PointerEvent<HTMLDivElement>) => {
@@ -66,6 +68,7 @@ export const useCanvasDrop = ({
 
     if (hit.type === 'pen') {
       transformRef.current = {
+        startEl: hit,
         isDragging: true,
         elementId: hit.id,
 
@@ -78,6 +81,7 @@ export const useCanvasDrop = ({
     }
     if (hit.type === 'line') {
       transformRef.current = {
+        startEl: hit,
         isDragging: true,
         elementId: hit.id,
         startMouse: { x, y },
@@ -93,6 +97,7 @@ export const useCanvasDrop = ({
     }
 
     transformRef.current = {
+      startEl: hit,
       isDragging: true,
       elementId: hit.id,
 
@@ -152,9 +157,15 @@ export const useCanvasDrop = ({
   };
   const handleUpdateObjectUp = () => {
     const id = transformRef.current.elementId;
-    setHistory(elements);
+    push({
+      type: 'UPDATE',
+      id,
+      before: transformRef.current.startEl!,
+      after: elements.find((el) => el.id === id)!,
+    });
 
     transformRef.current = {
+      startEl: null,
       isDragging: false,
       elementId: '',
       startMouse: { x: 0, y: 0 },

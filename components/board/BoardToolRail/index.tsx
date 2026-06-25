@@ -5,6 +5,7 @@ import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover
 import { colors } from '@/configs/colors';
 import { useUploadImage } from '@/hooks/useUploadImage';
 import { cn } from '@/lib/utils';
+import { useHistoryStore } from '@/store/useHistoryStore';
 import { ElementT, EventsCanvas } from '@/types/Element';
 import { UserT } from '@/types/UserT';
 import { getCanvasCenter } from '@/utils/canvas';
@@ -84,7 +85,7 @@ export function BoardToolRail({
   const [isColorsOpen, setIsColorsOpen] = useState(false);
   const activePopoverTool = mobilePopoverTools.find((tool) => tool.value === activeTool);
   const ActivePopoverToolIcon = activePopoverTool?.icon ?? Menu;
-
+  const { push } = useHistoryStore();
   const selectTool = (tool: BoardTool) => {
     onToolChange(tool);
     setIsToolsOpen(false);
@@ -111,6 +112,8 @@ export function BoardToolRail({
           file: url ?? '',
         };
         setElements((prev) => [...prev, element]);
+        push({ type: 'CREATE', element });
+
         await events.handleCreateElement(element);
       }
     };

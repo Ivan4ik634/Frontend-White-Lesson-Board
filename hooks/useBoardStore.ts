@@ -102,8 +102,6 @@ export const useBoardStore = ({ boardId }: UseBoardStoreProps) => {
 
     lastUpdateRef.current = now;
 
-    setElements((prev) => prev.map((el) => (el.id === element.id ? element : el)));
-
     await objectService.update(element.id, element);
 
     broadcast('object-updated', element);
@@ -112,8 +110,6 @@ export const useBoardStore = ({ boardId }: UseBoardStoreProps) => {
   const handleDeleteElement = async (id: string) => {
     if (!profile?.id) return;
 
-    setElements((prev) => prev.filter((el) => el.id !== id));
-
     await objectService.delete(id);
 
     broadcast('object-deleted', { id });
@@ -121,8 +117,6 @@ export const useBoardStore = ({ boardId }: UseBoardStoreProps) => {
 
   const handleDeleteElements = async (ids: string[]) => {
     if (!profile?.id || ids.length === 0) return;
-
-    setElements((prev) => prev.filter((el) => !ids.includes(el.id)));
 
     await objectService.deleteMany(ids);
 

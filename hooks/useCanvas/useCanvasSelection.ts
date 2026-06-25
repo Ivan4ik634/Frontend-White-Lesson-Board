@@ -20,7 +20,7 @@ export const useCanvasSelection = ({ zoom, elements, events, setElements, canvas
   const [selectedElementIds, setSelectedElementIds] = useState<string[]>([]);
   const selectedRef = useRef<string[]>([]);
 
-  const { setHistory } = useHistoryStore();
+  const { push } = useHistoryStore();
 
   const handleSelectionStart = (e: PointerEvent<HTMLDivElement>) => {
     if (!e.ctrlKey) return;
@@ -80,12 +80,11 @@ export const useCanvasSelection = ({ zoom, elements, events, setElements, canvas
         setElements((prev) => {
           const next = prev.filter((el) => !selectedRef.current.includes(el.id));
 
-          queueMicrotask(() => {
-            setHistory(next);
-          });
-
           return next;
         });
+        for (const id of selectedRef.current) {
+          push({ type: 'DELETE', element: elements.find((el) => el.id === id)! });
+        }
         await events.handleDeleteElements(selectedRef.current);
       }
     };

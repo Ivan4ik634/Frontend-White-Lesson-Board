@@ -24,9 +24,10 @@ export const useCanvasPen = ({
   setElements,
 }: Props) => {
   const pathIdRef = useRef('');
+  const objectRef = useRef<ElementT | null>(null);
   const isDrawingRef = useRef(false);
 
-  const { setHistory } = useHistoryStore();
+  const { push } = useHistoryStore();
 
   const handlePenStart = async (e: PointerEvent<HTMLDivElement>) => {
     if (tool !== 'pen') return;
@@ -46,9 +47,9 @@ export const useCanvasPen = ({
       type: 'pen',
       points: [point],
     };
+    objectRef.current = element;
 
     setElements((prev) => [element, ...prev]);
-
     await events.handleCreateElement(element);
   };
 
@@ -85,7 +86,12 @@ export const useCanvasPen = ({
   };
 
   const handlePenEnd = () => {
-    setHistory(elements);
+    push({
+      type: 'UPDATE',
+      id: objectRef.current!.id,
+      before: objectRef.current!,
+      after: elements.find((el) => el.id === objectRef.current!.id)!,
+    });
 
     isDrawingRef.current = false;
     pathIdRef.current = '';

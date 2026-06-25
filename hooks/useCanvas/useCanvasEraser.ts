@@ -24,7 +24,7 @@ export const useCanvasEraser = ({
   const [isErasing, setIsErasing] = useState(false);
   const [elementsIdsRemove, setElementsIdsRemove] = useState<string[]>([]);
   const lastPointRef = useRef({ x: 0, y: 0 });
-  const { setHistory } = useHistoryStore();
+  const { push } = useHistoryStore();
 
   const handleEraserStart = (e: PointerEvent<HTMLDivElement>) => {
     if (tool !== 'eraser') return;
@@ -61,9 +61,12 @@ export const useCanvasEraser = ({
     setIsErasing(false);
     setElements((prev) => {
       const next = prev.filter((el) => !elementsIdsRemove.includes(el.id));
-      setHistory(next);
+
       return next;
     });
+    for (const id of elementsIdsRemove) {
+      push({ type: 'DELETE', element: elements.find((el) => el.id === id)! });
+    }
     await events.handleDeleteElements(elementsIdsRemove);
     setElementsIdsRemove([]);
   };

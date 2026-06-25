@@ -3,7 +3,12 @@ import { MouseEvent, PointerEvent, RefObject } from 'react';
 import { isPointInsideElement } from './isPointInsideElement';
 
 interface GetWorldProps {
-  e: MouseEvent<HTMLDivElement> | PointerEvent<HTMLDivElement> | MouseEvent | PointerEvent;
+  e:
+    | MouseEvent<HTMLDivElement>
+    | globalThis.PointerEvent
+    | PointerEvent<HTMLDivElement>
+    | MouseEvent
+    | PointerEvent;
   zoom: number;
   canvasRef: RefObject<HTMLDivElement | null>;
 }
