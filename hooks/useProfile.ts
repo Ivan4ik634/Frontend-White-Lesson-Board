@@ -1,6 +1,6 @@
 import { supabase } from '@/lib/supabase';
-import type { PostgrestError } from '@supabase/supabase-js';
 import { UserT } from '@/types/UserT';
+import type { PostgrestError } from '@supabase/supabase-js';
 import { useEffect, useState } from 'react';
 import { toast } from 'sonner';
 import { useSupabaseQuery } from './useSupabaseQuery';
@@ -19,7 +19,6 @@ export const useProfile = () => {
 
       if (error) {
         setAuthError(error);
-        toast.error(error.message);
       }
 
       setUserId(user?.id ?? null);

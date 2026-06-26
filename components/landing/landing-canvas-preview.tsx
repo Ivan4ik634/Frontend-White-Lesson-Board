@@ -25,6 +25,7 @@ export function LandingCanvasPreview() {
         <Canvas
           mode="demo"
           boardId=""
+          profile={null}
           initData={elements}
           setElements={setElements}
           events={events}
