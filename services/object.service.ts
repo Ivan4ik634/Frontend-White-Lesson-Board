@@ -39,16 +39,6 @@ export const objectService = {
       })),
     );
   },
-  replaceBoard(boardId: string, userId: string, elements: ElementT[]) {
-    return supabase.from('object').upsert(
-      elements.map((el) => ({
-        board_id: boardId,
-        last_change_user: userId,
-        objectId: el.id,
-        object: el,
-      })),
-    );
-  },
 
   deleteMany(objectIds: string[]) {
     return supabase.from('object').delete().in('objectId', objectIds);

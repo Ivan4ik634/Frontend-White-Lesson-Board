@@ -73,19 +73,10 @@ export const useBoardStore = ({ boardId }: UseBoardStoreProps) => {
 
     broadcast('object-created', element);
   };
-  const handleReplaceBoard = async (nextElements: ElementT[]) => {
-    if (!profile?.id) return;
-
-    await objectService.replaceBoard(boardId, profile.id, nextElements);
-
-    broadcast('board-replace', {
-      elements: nextElements,
-    });
-  };
 
   const handleCreateElements = async (newElements: ElementT[]) => {
     if (!profile?.id || newElements.length === 0) return;
-
+    console.log(newElements);
     await objectService.createMany(boardId, profile.id, newElements);
 
     broadcast('objects-created', {
@@ -246,7 +237,6 @@ export const useBoardStore = ({ boardId }: UseBoardStoreProps) => {
       handleUpdateElement,
       handleDeleteElement,
       handleDeleteElements,
-      handleReplaceBoard,
     },
 
     loading,

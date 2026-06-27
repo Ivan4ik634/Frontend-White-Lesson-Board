@@ -1,4 +1,5 @@
 import { BoardTool } from '@/components/board/BoardToolRail';
+import { useCameraStore } from '@/store/useCameraStore';
 import {
   PointerEvent,
   RefObject,
@@ -14,6 +15,7 @@ export const useCanvasCamera = (
   canvasRef: RefObject<HTMLDivElement | null>,
   cameraInit?: { x: number; y: number },
 ) => {
+  const { setCameraStore } = useCameraStore();
   const [camera, setCamera] = useState({ x: 0, y: 0 });
   const [zoom, setZoom] = useState(1);
   const ref = useRef<HTMLDivElement>(null);
@@ -27,6 +29,9 @@ export const useCanvasCamera = (
     }
   }, [cameraInit]);
 
+  useEffect(() => {
+    setCameraStore({ ...camera, zoom });
+  }, [camera, zoom]);
   const handleCaremaStart = (e: PointerEvent<HTMLDivElement>) => {
     if (tool !== 'grab') return;
     isDraggingRef.current = true;

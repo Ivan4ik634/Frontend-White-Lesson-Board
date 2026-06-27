@@ -6,6 +6,7 @@ import { colors } from '@/configs/colors';
 import { useUploadImage } from '@/hooks/useUploadImage';
 import { cn } from '@/lib/utils';
 import { useHistoryStore } from '@/store/useHistoryStore';
+import { useOpenAiChat } from '@/store/useOpenAiChat';
 import { ElementT, EventsCanvas } from '@/types/Element';
 import { UserT } from '@/types/UserT';
 import { getCanvasCenter } from '@/utils/canvas';
@@ -18,6 +19,7 @@ import {
   Menu,
   MousePointer2,
   Pen,
+  Sparkles,
   Square,
   Type,
 } from 'lucide-react';
@@ -42,6 +44,7 @@ type BoardToolRailProps = {
   profile: UserT | null;
   ref: React.RefObject<HTMLDivElement | null>;
   zoom: number;
+  boardId: string;
   camera: { x: number; y: number };
   events: EventsCanvas;
   setColor: React.Dispatch<React.SetStateAction<string>>;
@@ -71,6 +74,7 @@ const mobileVisibleTools = tools.filter((tool) => !mobilePopoverToolValues.inclu
 export function BoardToolRail({
   activeTool,
   profile,
+  boardId,
   color,
   ref: canvasRef,
   zoom,
@@ -80,6 +84,7 @@ export function BoardToolRail({
   onToolChange,
   events,
 }: BoardToolRailProps) {
+  const { open, setOpen } = useOpenAiChat();
   const { ref, url, handleUploadImage } = useUploadImage(profile);
   const [isToolsOpen, setIsToolsOpen] = useState(false);
   const [isColorsOpen, setIsColorsOpen] = useState(false);
@@ -208,7 +213,7 @@ export function BoardToolRail({
         </Popover>
       </div>
 
-      {/* {pathname !== '/' && (
+      {boardId && (
         <Button
           type="button"
           variant={open ? 'secondary' : 'ghost'}
@@ -223,7 +228,7 @@ export function BoardToolRail({
           )}>
           <Sparkles className="size-4" aria-hidden />
         </Button>
-      )} */}
+      )}
       <div className="ml-1 sm:hidden">
         <Popover open={isColorsOpen} onOpenChange={setIsColorsOpen}>
           <PopoverTrigger

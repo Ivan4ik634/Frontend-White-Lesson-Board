@@ -127,6 +127,7 @@ export function Canvas({
   } = useCanvasDrop({
     elements,
     setElements,
+    selectedElementIds,
     canvasRef,
     setSelectedElementIds,
     events,
@@ -217,6 +218,7 @@ export function Canvas({
       onTouchMove={handleTouchMove}
       onTouchEnd={handleTouchEnd}>
       <BoardToolRail
+        boardId={boardId}
         setElements={setElements}
         profile={profile}
         camera={camera}

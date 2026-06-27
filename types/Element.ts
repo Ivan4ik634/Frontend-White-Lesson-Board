@@ -59,6 +59,5 @@ export type EventsCanvas = {
   handleUpdateElement: (element: ElementT) => Promise<void>;
   handleDeleteElement: (id: string) => Promise<void>;
   handleDeleteElements: (ids: string[]) => Promise<void>;
-  handleReplaceBoard: (nextElements: ElementT[]) => Promise<void>;
 };
 export interface CursorsCanvas extends BoardUserT {}

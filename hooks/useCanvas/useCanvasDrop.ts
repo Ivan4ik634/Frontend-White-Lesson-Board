@@ -8,6 +8,7 @@ interface Props {
   canvasRef: RefObject<HTMLDivElement | null>;
   zoom: number;
   setSelectedElementIds: React.Dispatch<React.SetStateAction<string[]>>;
+  selectedElementIds: string[];
   setElements: React.Dispatch<React.SetStateAction<ElementT[]>>;
   resizeRef: RefObject<{ isResizing: boolean }>;
   events: EventsCanvas;
@@ -16,27 +17,20 @@ export const useCanvasDrop = ({
   elements,
   setElements,
   setSelectedElementIds,
+  selectedElementIds,
   canvasRef,
   events,
   zoom,
   resizeRef,
 }: Props) => {
   const transformRef = useRef<{
-    startEl: ElementT | null;
     isDragging: boolean;
-    elementId: string;
     startMouse: { x: number; y: number };
-    startElement?: { x: number; y: number };
-    startPoints?: { x: number; y: number }[];
-    startLine?: { x1: number; y1: number; x2: number; y2: number };
+    startElements: ElementT[];
   }>({
-    startEl: null,
     isDragging: false,
-    elementId: '',
     startMouse: { x: 0, y: 0 },
-    startElement: { x: 0, y: 0 },
-    startPoints: [],
-    startLine: { x1: 0, y1: 0, x2: 0, y2: 0 },
+    startElements: [],
   });
 
   const { push } = useHistoryStore();
@@ -56,6 +50,18 @@ export const useCanvasDrop = ({
       y,
       elements,
     });
+
+    if (selectedElementIds.includes(hit?.id!)) {
+      transformRef.current = {
+        isDragging: true,
+        startMouse: { x, y },
+
+        startElements: selectedElementIds
+          .map((id) => elements.find((el) => el.id === id)!)
+          .filter(Boolean),
+      };
+      return;
+    }
     if (!hit) {
       setSelectedElementIds([]);
 
@@ -64,52 +70,15 @@ export const useCanvasDrop = ({
       return;
     }
 
-    setSelectedElementMove(hit.id);
-
-    if (hit.type === 'pen') {
-      transformRef.current = {
-        startEl: hit,
-        isDragging: true,
-        elementId: hit.id,
-
-        startMouse: { x, y },
-
-        startPoints: hit.points,
-      };
-
-      return;
-    }
-    if (hit.type === 'line') {
-      transformRef.current = {
-        startEl: hit,
-        isDragging: true,
-        elementId: hit.id,
-        startMouse: { x, y },
-        startLine: {
-          x1: hit.x1,
-          y1: hit.y1,
-          x2: hit.x2,
-          y2: hit.y2,
-        },
-      };
-
-      return;
-    }
-
     transformRef.current = {
-      startEl: hit,
       isDragging: true,
-      elementId: hit.id,
 
       startMouse: { x, y },
 
-      startElement: {
-        x: hit.x,
-        y: hit.y,
-      },
+      startElements: [hit],
     };
   };
-  const handleUpdateObjectMove = async (e: PointerEvent<HTMLDivElement>) => {
+  const handleUpdateObjectMove = (e: PointerEvent<HTMLDivElement>) => {
     if (!transformRef.current.isDragging) return;
 
     const { x, y } = getWorld({ e, zoom, canvasRef });
@@ -117,65 +86,69 @@ export const useCanvasDrop = ({
     const dx = x - transformRef.current.startMouse.x;
     const dy = y - transformRef.current.startMouse.y;
 
-    const id = transformRef.current.elementId;
+    const startElements = transformRef.current.startElements;
+    if (!startElements) return;
 
-    const current = elements.find((el) => el.id === id);
-    if (!current) return;
+    const updated = startElements.map((el) => {
+      if (el.type === 'line') {
+        return {
+          ...el,
+          x1: el.x1 + dx,
+          y1: el.y1 + dy,
+          x2: el.x2 + dx,
+          y2: el.y2 + dy,
+        };
+      }
 
-    let updatedElement = current;
+      if (el.type === 'pen') {
+        return {
+          ...el,
+          points: el.points.map((p) => ({
+            x: p.x + dx,
+            y: p.y + dy,
+          })),
+        };
+      }
 
-    if (current.type === 'pen') {
-      updatedElement = {
-        ...current,
-        points: transformRef.current.startPoints!.map((p) => ({
-          x: p.x + dx,
-          y: p.y + dy,
-        })),
+      return {
+        ...el,
+        x: el.x + dx,
+        y: el.y + dy,
       };
-    } else if (current.type === 'line') {
-      updatedElement = {
-        ...current,
-        x1: transformRef.current.startLine!.x1 + dx,
-        y1: transformRef.current.startLine!.y1 + dy,
-        x2: transformRef.current.startLine!.x2 + dx,
-        y2: transformRef.current.startLine!.y2 + dy,
-      };
-    } else {
-      updatedElement = {
-        ...current,
-        x: transformRef.current.startElement!.x + dx,
-        y: transformRef.current.startElement!.y + dy,
-      };
-    }
+    });
 
     setElements((prev) => {
-      const next = prev.map((el) => (el.id === id ? updatedElement : el));
-      return next;
+      const map = new Map(updated.map((el) => [el.id, el]));
+
+      return prev.map((el) => map.get(el.id) ?? el);
     });
 
-    events.handleUpdateElement(updatedElement);
+    updated.forEach((el) => {
+      events.handleUpdateElement(el);
+    });
   };
   const handleUpdateObjectUp = () => {
-    const id = transformRef.current.elementId;
-    push({
-      type: 'UPDATE',
-      id,
-      before: transformRef.current.startEl!,
-      after: elements.find((el) => el.id === id)!,
+    const start = transformRef.current.startElements;
+    const end = elements;
+
+    start.forEach((el) => {
+      push({
+        type: 'UPDATE',
+        id: el.id,
+        before: el,
+        after: end.find((e) => e.id === el.id)!,
+      });
     });
 
-    transformRef.current = {
-      startEl: null,
-      isDragging: false,
-      elementId: '',
-      startMouse: { x: 0, y: 0 },
-      startElement: { x: 0, y: 0 },
-      startPoints: [],
-      startLine: { x1: 0, y1: 0, x2: 0, y2: 0 },
-    };
-
     setSelectedElementMove('');
-    setSelectedElementIds(id ? [id] : []);
+
+    setSelectedElementIds(start.map((el) => el.id));
+
+    transformRef.current = {
+      isDragging: false,
+      startMouse: { x: 0, y: 0 },
+      startElements: [],
+    };
   };
 
   return {
