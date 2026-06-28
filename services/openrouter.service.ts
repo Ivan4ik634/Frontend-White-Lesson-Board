@@ -2,7 +2,6 @@ import { openrouter } from '@/lib/openrouter';
 
 export const openrouterService = {
   async owlAlphaModelServer(text: string) {
-    console.log('KEY:', process.env.OPENROUTER_API_KEY);
     const response = await openrouter.chat.send({
       chatRequest: {
         model: 'owl-alpha',
@@ -13,7 +12,7 @@ export const openrouterService = {
           },
         ],
         temperature: 0.2,
-        maxTokens: 8000,
+        maxTokens: 5000,
       },
     });
 

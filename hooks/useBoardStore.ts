@@ -76,7 +76,6 @@ export const useBoardStore = ({ boardId }: UseBoardStoreProps) => {
 
   const handleCreateElements = async (newElements: ElementT[]) => {
     if (!profile?.id || newElements.length === 0) return;
-    console.log(newElements);
     await objectService.createMany(boardId, profile.id, newElements);
 
     broadcast('objects-created', {

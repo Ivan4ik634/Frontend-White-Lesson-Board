@@ -19,7 +19,6 @@ interface Props extends BoardT {
 const Board: FC<Props> = (props) => {
   const t = useTranslations('boards');
   const access = props.access === 'public' ? t('public') : t('private');
-  console.log(props.isOwner, props.profile, props.user_id);
   return (
     <Card className="h-full relative overflow-hidden">
       <CardContent className="h-full">
