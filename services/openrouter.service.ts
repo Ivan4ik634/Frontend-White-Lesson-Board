@@ -4,7 +4,7 @@ export const openrouterService = {
   async owlAlphaModelServer(text: string) {
     const response = await openrouter.chat.send({
       chatRequest: {
-        model: 'owl-alpha',
+        model: 'stealth/ox-alpha',
         messages: [
           {
             role: 'user',
@@ -23,7 +23,7 @@ export const openrouterService = {
       method: 'POST',
       body: JSON.stringify({ message: text }),
     });
-
+    console.log(res);
     const data = await res.json();
     return data;
   },
