@@ -1,36 +1,64 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# White Miro
 
-## Getting Started
+A real-time collaborative online whiteboard where users can create, edit and organize content together.
 
-First, run the development server:
+White Miro is a collaborative workspace built around real-time interaction. Users can create boards, add different objects, attach files and work together on the same canvas.
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+The project is inspired by collaborative whiteboards such as Miro, but is built as an independent application with its own architecture, interface and feature set.
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Features
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+* Real-time collaboration
+* Interactive infinite canvas
+* Create and edit different objects
+* File attachments
+* Multiple users on the same board
+* Undo and redo
+* Authentication
+* Board management
+* Shareable boards
+* Responsive interface
+* Persistent board data
+* Real-time synchronization
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Tech Stack
 
-## Learn More
+* Next.js
+* React
+* TypeScript
+* Supabase
+* Socket.IO
+* MongoDB
+* Tailwind CSS
 
-To learn more about Next.js, take a look at the following resources:
+## How It Works
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+Each board acts as a shared workspace where users can create and manipulate different objects.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+Changes are synchronized in real time, allowing multiple users to work on the same board simultaneously without refreshing the page.
 
-## Deploy on Vercel
+The application combines real-time communication, authentication, persistent storage, file handling and an interactive canvas into one platform.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Main Goals
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+The main goal of White Miro is to build a full-featured collaborative workspace from scratch and explore how real-time applications work.
+
+The project focuses on:
+
+* Real-time state synchronization
+* Collaborative editing
+* Scalable application architecture
+* Authentication and authorization
+* File handling
+* Complex frontend interactions
+* Persistent data storage
+
+## Project Status
+
+White Miro is an actively developed project.
+
+New features, improvements and optimizations are added over time.
+
+## Author
+
+Built as an independent full-stack project.
