@@ -1,25 +1,25 @@
-# White Miro
+# Claro
 
-A real-time collaborative online whiteboard where users can create, edit and organize content together.
+A real-time collaborative online whiteboard built for teams and individuals.
 
-White Miro is a collaborative workspace built around real-time interaction. Users can create boards, add different objects, attach files and work together on the same canvas.
+Claro is a collaborative workspace where users can create boards, work with different objects, attach files and interact with other users in real time.
 
-The project is inspired by collaborative whiteboards such as Miro, but is built as an independent application with its own architecture, interface and feature set.
+The project combines a dynamic canvas with real-time communication, authentication, persistent data and collaborative tools.
 
 ## Features
 
 * Real-time collaboration
-* Interactive infinite canvas
-* Create and edit different objects
+* Infinite canvas
+* Create, edit and manipulate objects
 * File attachments
 * Multiple users on the same board
 * Undo and redo
 * Authentication
 * Board management
 * Shareable boards
-* Responsive interface
-* Persistent board data
 * Real-time synchronization
+* Persistent data
+* Responsive interface
 
 ## Tech Stack
 
@@ -31,33 +31,31 @@ The project is inspired by collaborative whiteboards such as Miro, but is built 
 * MongoDB
 * Tailwind CSS
 
-## How It Works
+## Architecture
 
-Each board acts as a shared workspace where users can create and manipulate different objects.
+Claro uses a combination of real-time communication and persistent storage to keep collaborative boards synchronized.
 
-Changes are synchronized in real time, allowing multiple users to work on the same board simultaneously without refreshing the page.
+Users can interact with the same board simultaneously, while changes are synchronized between connected clients in real time.
 
-The application combines real-time communication, authentication, persistent storage, file handling and an interactive canvas into one platform.
+Authentication and data access are handled through Supabase, while MongoDB is used for application data. Socket.IO is responsible for real-time communication between clients.
 
-## Main Goals
+## Project Goals
 
-The main goal of White Miro is to build a full-featured collaborative workspace from scratch and explore how real-time applications work.
+Claro was built to explore the development of real-time collaborative applications and complex interactive interfaces.
 
 The project focuses on:
 
 * Real-time state synchronization
 * Collaborative editing
-* Scalable application architecture
 * Authentication and authorization
 * File handling
-* Complex frontend interactions
+* Interactive canvas systems
 * Persistent data storage
+* Full-stack application architecture
 
 ## Project Status
 
-White Miro is an actively developed project.
-
-New features, improvements and optimizations are added over time.
+Claro is actively developed and new features are being added over time.
 
 ## Author
 
